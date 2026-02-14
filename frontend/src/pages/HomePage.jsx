@@ -97,35 +97,22 @@ const HomePage = () => {
     ]
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-white overflow-hidden">
-            {/* Animated background gradient */}
-            <div 
-                className="fixed inset-0 opacity-30 pointer-events-none"
-                style={{
-                    background: `radial-gradient(circle at ${mousePosition.x}px ${mousePosition.y}px, rgba(99, 102, 241, 0.15), transparent 50%)`
-                }}
+        <div className="min-h-screen text-white overflow-hidden relative">
+            {/* DarkVeil Fixed Background - Full Screen */}
+            <DarkVeil
+                hueShift={200}
+                noiseIntensity={0.03}
+                scanlineIntensity={0}
+                speed={0.4}
+                scanlineFrequency={0}
+                warpAmount={0.3}
+                resolutionScale={0.75}
             />
 
             <Navbar />
 
             {/* Hero Section */}
-            <section className="relative min-h-screen flex items-center justify-center px-4 pt-20 overflow-hidden">
-                {/* DarkVeil Animated Background */}
-                <div className="absolute inset-0 opacity-40">
-                    <DarkVeil
-                        hueShift={180}
-                        noiseIntensity={0.05}
-                        scanlineIntensity={0}
-                        speed={0.3}
-                        scanlineFrequency={0}
-                        warpAmount={0.2}
-                        resolutionScale={0.8}
-                    />
-                </div>
-
-                {/* Gradient overlay for better text readability */}
-                <div className="absolute inset-0 bg-gradient-to-b from-slate-950/50 via-transparent to-slate-950/80 pointer-events-none" />
-
+            <section className="relative min-h-screen flex items-center justify-center px-4 pt-20">
                 <div className="relative z-10 max-w-7xl mx-auto text-center">
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
@@ -209,7 +196,7 @@ const HomePage = () => {
             </section>
 
             {/* Stats Section */}
-            <section className="relative py-20 px-4">
+            <section className="relative py-20 px-4 z-10">
                 <div className="max-w-7xl mx-auto">
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
                         {stats.map((stat, index) => (
@@ -220,7 +207,7 @@ const HomePage = () => {
             </section>
 
             {/* Features Section */}
-            <section className="relative py-20 px-4">
+            <section className="relative py-20 px-4 z-10">
                 <div className="max-w-7xl mx-auto">
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
@@ -248,7 +235,7 @@ const HomePage = () => {
             </section>
 
             {/* How It Works Section */}
-            <section className="relative py-20 px-4">
+            <section className="relative py-20 px-4 z-10">
                 <div className="max-w-7xl mx-auto">
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
@@ -316,7 +303,7 @@ const HomePage = () => {
             </section>
 
             {/* Testimonials Section */}
-            <section className="relative py-20 px-4">
+            <section className="relative py-20 px-4 z-10">
                 <div className="max-w-7xl mx-auto">
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
@@ -344,7 +331,7 @@ const HomePage = () => {
             </section>
 
             {/* CTA Section */}
-            <section className="relative py-32 px-4">
+            <section className="relative py-32 px-4 z-10">
                 <div className="max-w-4xl mx-auto text-center">
                     <motion.div
                         initial={{ opacity: 0, scale: 0.9 }}

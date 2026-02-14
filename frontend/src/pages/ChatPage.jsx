@@ -6,6 +6,7 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import ReactMarkdown from 'react-markdown'
 import TextRoll from '../components/TextRoll'
+import DarkVeil from '../components/DarkVeil'
 
 const ChatPage = () => {
     const navigate = useNavigate()
@@ -117,7 +118,18 @@ const ChatPage = () => {
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-white">
+        <div className="min-h-screen text-white relative">
+            {/* DarkVeil Fixed Background */}
+            <DarkVeil
+                hueShift={200}
+                noiseIntensity={0.03}
+                scanlineIntensity={0}
+                speed={0.4}
+                scanlineFrequency={0}
+                warpAmount={0.3}
+                resolutionScale={0.75}
+            />
+            
             {/* Header */}
             <motion.header
                 initial={{ y: -100 }}

@@ -5,6 +5,7 @@ import { ArrowLeft, Code2, Brain, Shield, Zap, Globe, MessageSquare, Github, Tre
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import TextRoll from '../components/TextRoll'
+import DarkVeil from '../components/DarkVeil'
 
 const FeaturesPage = () => {
     const navigate = useNavigate()
@@ -120,11 +121,22 @@ const FeaturesPage = () => {
     ]
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-white">
+        <div className="min-h-screen text-white relative">
+            {/* DarkVeil Fixed Background */}
+            <DarkVeil
+                hueShift={200}
+                noiseIntensity={0.03}
+                scanlineIntensity={0}
+                speed={0.4}
+                scanlineFrequency={0}
+                warpAmount={0.3}
+                resolutionScale={0.75}
+            />
+            
             <Navbar />
 
             {/* Hero Section */}
-            <section className="relative pt-32 pb-20 px-4">
+            <section className="relative pt-32 pb-20 px-4 z-10">
                 <div className="max-w-7xl mx-auto">
                     <button
                         onClick={() => navigate('/')}
@@ -183,7 +195,7 @@ const FeaturesPage = () => {
             </section>
 
             {/* CTA Section */}
-            <section className="relative py-20 px-4">
+            <section className="relative py-20 px-4 z-10">
                 <div className="max-w-4xl mx-auto text-center">
                     <motion.div
                         initial={{ opacity: 0, scale: 0.9 }}
