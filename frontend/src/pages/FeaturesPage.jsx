@@ -5,13 +5,18 @@ import { ArrowLeft, Code2, Brain, Shield, Zap, Globe, MessageSquare, Github, Tre
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import TextRoll from '../components/TextRoll'
+import MultiAgentIcon from '../assets/images/multi-agent-architecture.svg'
+import SmartCodeReviewIcon from '../assets/images/smart-code-review.svg'
+import MultilingualIcon from '../assets/images/multilingual-support.svg'
+import RealTimeChatIcon from '../assets/images/real-time-chat.svg'
+import WhatsAppIcon from '../assets/images/whatsapp-integration.svg'
 
 const FeaturesPage = () => {
     const navigate = useNavigate()
 
     const features = [
         {
-            icon: <Brain className="w-12 h-12" />,
+            icon: <img src={MultiAgentIcon} className="w-12 h-12" alt="Multi-Agent Architecture" />,
             title: "Multi-Agent Architecture",
             description: "Three specialized AI agents work together to provide comprehensive code assistance",
             details: [
@@ -22,7 +27,7 @@ const FeaturesPage = () => {
             color: "from-blue-500 to-cyan-500"
         },
         {
-            icon: <Code2 className="w-12 h-12" />,
+            icon: <img src={SmartCodeReviewIcon} className="w-12 h-12" alt="Smart Code Review" />,
             title: "Smart Code Review",
             description: "Automated PR reviews with deep analysis and actionable feedback",
             details: [
@@ -34,7 +39,7 @@ const FeaturesPage = () => {
             color: "from-purple-500 to-pink-500"
         },
         {
-            icon: <Globe className="w-12 h-12" />,
+            icon: <img src={MultilingualIcon} className="w-12 h-12" alt="Multilingual Support" />,
             title: "Multilingual Support",
             description: "Explain complex code in Hindi, English, or Hinglish",
             details: [
@@ -46,7 +51,7 @@ const FeaturesPage = () => {
             color: "from-orange-500 to-red-500"
         },
         {
-            icon: <Zap className="w-12 h-12" />,
+            icon: <img src={RealTimeChatIcon} className="w-12 h-12" alt="Real-Time Communication" />,
             title: "Real-Time Communication",
             description: "Instant responses via WebSocket for seamless interaction",
             details: [
@@ -70,7 +75,7 @@ const FeaturesPage = () => {
             color: "from-green-500 to-emerald-500"
         },
         {
-            icon: <MessageSquare className="w-12 h-12" />,
+            icon: <img src={WhatsAppIcon} className="w-12 h-12" alt="WhatsApp Integration" />,
             title: "WhatsApp Integration",
             description: "Code on the go with mobile-first WhatsApp support",
             details: [

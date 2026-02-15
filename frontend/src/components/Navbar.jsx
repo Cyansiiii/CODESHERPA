@@ -3,6 +3,7 @@ import { motion } from 'framer-motion'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { Sparkles, Menu, X, Github } from 'lucide-react'
 import TextRoll from './TextRoll'
+import Logo from '../assets/images/logo.svg'
 
 const Navbar = () => {
     const navigate = useNavigate()
@@ -28,19 +29,17 @@ const Navbar = () => {
         <motion.nav
             initial={{ y: -100 }}
             animate={{ y: 0 }}
-            className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-                isScrolled ? 'glass-dark border-b border-white/10' : 'bg-transparent'
-            }`}
+            className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? 'glass-dark border-b border-white/10' : 'bg-transparent'
+                }`}
         >
             <div className="max-w-7xl mx-auto px-4 py-4">
                 <div className="flex items-center justify-between">
-                    {/* Logo */}
                     <button
                         onClick={() => navigate('/')}
                         className="flex items-center gap-2 group"
                     >
-                        <div className="w-10 h-10 rounded-full bg-gradient-to-r from-white-600 to-white-600 flex items-center justify-center group-hover:scale-110 transition-transform">
-                            <Sparkles className="w-5 h-5" />
+                        <div className="w-10 h-10 flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <img src={Logo} alt="CodeSherpa Logo" className="w-8 h-8" />
                         </div>
                         <TextRoll className="text-xl font-black gradient-text-white inline-block">
                             CODESHERPA
@@ -53,11 +52,10 @@ const Navbar = () => {
                             <button
                                 key={item.path}
                                 onClick={() => navigate(item.path)}
-                                className={`text-sm font-medium transition-colors ${
-                                    location.pathname === item.path
-                                        ? 'text-white'
-                                        : 'text-gray-400 hover:text-white'
-                                }`}
+                                className={`text-sm font-medium transition-colors ${location.pathname === item.path
+                                    ? 'text-white'
+                                    : 'text-gray-400 hover:text-white'
+                                    }`}
                             >
                                 {item.name}
                             </button>
@@ -104,11 +102,10 @@ const Navbar = () => {
                                         navigate(item.path)
                                         setIsMobileMenuOpen(false)
                                     }}
-                                    className={`text-left px-4 py-2 rounded-lg transition-colors ${
-                                        location.pathname === item.path
-                                            ? 'bg-white/10 text-white'
-                                            : 'text-gray-400 hover:bg-white/5 hover:text-white'
-                                    }`}
+                                    className={`text-left px-4 py-2 rounded-lg transition-colors ${location.pathname === item.path
+                                        ? 'bg-white/10 text-white'
+                                        : 'text-gray-400 hover:bg-white/5 hover:text-white'
+                                        }`}
                                 >
                                     {item.name}
                                 </button>

@@ -15,6 +15,11 @@ import ScrollAnimationShowcase from '../components/ScrollAnimationShowcase'
 import StatsCounter from '../components/StatsCounter'
 import TestimonialCard from '../components/TestimonialCard'
 import DarkVeil from '../components/DarkVeil'
+import MultiAgentIcon from '../assets/images/multi-agent-architecture.svg'
+import SmartCodeReviewIcon from '../assets/images/smart-code-review.svg'
+import MultilingualIcon from '../assets/images/multilingual-support.svg'
+import RealTimeChatIcon from '../assets/images/real-time-chat.svg'
+import WhatsAppIcon from '../assets/images/whatsapp-integration.svg'
 
 // ... existing imports
 
@@ -32,25 +37,25 @@ const HomePage = () => {
 
     const features = [
         {
-            icon: <Brain className="w-8 h-8" />,
+            icon: <img src={MultiAgentIcon} className="w-8 h-8" alt="Multi-Agent AI System" />,
             title: "Multi-Agent AI System",
             description: "Specialized AI agents for code review, learning, and documentation",
             color: "from-blue-500/80 to-cyan-500/80"
         },
         {
-            icon: <Code2 className="w-8 h-8" />,
+            icon: <img src={SmartCodeReviewIcon} className="w-8 h-8" alt="Smart Code Review" />,
             title: "Smart Code Review",
             description: "Automated PR reviews with security checks and best practices",
             color: "from-purple-500/80 to-pink-500/80"
         },
         {
-            icon: <Globe className="w-8 h-8" />,
+            icon: <img src={MultilingualIcon} className="w-8 h-8" alt="Multilingual Support" />,
             title: "Multilingual Support",
             description: "Explain code in Hindi, English, or Hinglish for Indian developers",
             color: "from-orange-500/80 to-red-500/80"
         },
         {
-            icon: <Zap className="w-8 h-8" />,
+            icon: <img src={RealTimeChatIcon} className="w-8 h-8" alt="Real-Time Chat" />,
             title: "Real-Time Chat",
             description: "Instant responses via WebSocket for seamless interaction",
             color: "from-yellow-500/80 to-orange-500/80"
@@ -62,7 +67,7 @@ const HomePage = () => {
             color: "from-green-500/80 to-emerald-500/80"
         },
         {
-            icon: <MessageSquare className="w-8 h-8" />,
+            icon: <img src={WhatsAppIcon} className="w-8 h-8" alt="WhatsApp Integration" />,
             title: "WhatsApp Integration",
             description: "Code on the go with mobile-first WhatsApp support",
             color: "from-teal-500/80 to-cyan-500/80"
