@@ -13,9 +13,9 @@ body {
   overflow-x: hidden;
 }
 
-/* Smooth scrolling */
+/* Lenis controls smooth scrolling globally */
 html {
-  scroll-behavior: smooth;
+  scroll-behavior: auto;
 }
 
 /* Custom scrollbar */

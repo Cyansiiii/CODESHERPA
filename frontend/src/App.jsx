@@ -9,8 +9,21 @@ import './App.css'
 import DarkVeil from './components/DarkVeil'
 
 function App() {
+    const lenisOptions = React.useMemo(
+        () => ({
+            autoRaf: true,
+            smoothWheel: true,
+            syncTouch: true,
+            touchMultiplier: 1.05,
+            wheelMultiplier: 0.9,
+            lerp: 0.09,
+            anchors: true,
+        }),
+        []
+    )
+
     return (
-        <ReactLenis root options={{ autoRaf: true }}>
+        <ReactLenis root options={lenisOptions}>
             <Router>
                 <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', zIndex: -1, pointerEvents: 'none' }}>
                     <DarkVeil

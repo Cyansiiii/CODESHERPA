@@ -2,74 +2,31 @@
 
 import { motion, useScroll, useTransform } from "framer-motion";
 import React, { useRef } from "react";
-import { cn } from "@/lib/utils";
+import {
+    Atom,
+    Braces,
+    Cloud,
+    Cpu,
+    FileCode2,
+    Rocket,
+    ShieldCheck,
+} from "lucide-react";
 
-// Helper components for the scroll animation
-
-const CharacterV1 = ({
-    char,
-    index,
-    centerIndex,
-    scrollYProgress,
-}) => {
+const CharacterV1 = ({ char, index, centerIndex, scrollYProgress }) => {
     const isSpace = char === " ";
     const distanceFromCenter = index - centerIndex;
 
-    // Adjusted ranges and output values for smoother, more subtle animation
-    const x = useTransform(
-        scrollYProgress,
-        [0, 1],
-        [distanceFromCenter * 50, 0],
-    );
-    const rotateX = useTransform(
-        scrollYProgress,
-        [0, 1],
-        [distanceFromCenter * 50, 0],
-    );
+    const x = useTransform(scrollYProgress, [0, 1], [distanceFromCenter * 48, 0]);
+    const y = useTransform(scrollYProgress, [0, 1], [Math.abs(distanceFromCenter) * 22, 0]);
+    const opacity = useTransform(scrollYProgress, [0, 0.35, 1], [0, 0.7, 1]);
 
     return (
         <motion.span
-            className={cn("inline-block text-blue-500", isSpace && "w-4")}
+            className={`inline-block bg-clip-text text-transparent bg-gradient-to-b from-blue-300 via-indigo-300 to-purple-400 ${isSpace ? "w-4" : ""}`}
             style={{
                 x,
-                rotateX,
-            }}
-        >
-            {char}
-        </motion.span>
-    );
-};
-
-const CharacterV2 = ({
-    char,
-    index,
-    centerIndex,
-    scrollYProgress,
-}) => {
-    const isSpace = char === " ";
-    const distanceFromCenter = index - centerIndex;
-
-    const x = useTransform(
-        scrollYProgress,
-        [0, 1],
-        [distanceFromCenter * 50, 0],
-    );
-    const scale = useTransform(scrollYProgress, [0, 1], [0.5, 1]);
-
-    const y = useTransform(
-        scrollYProgress,
-        [0, 1],
-        [Math.abs(distanceFromCenter) * 30, 0],
-    );
-
-    return (
-        <motion.span
-            className={cn("inline-block mx-1", isSpace && "w-4")}
-            style={{
-                x,
-                scale,
                 y,
-                transformOrigin: "center",
+                opacity,
             }}
         >
             {char}
@@ -77,71 +34,62 @@ const CharacterV2 = ({
     );
 };
 
-const Bracket = ({ className }) => {
-    return (
-        <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 27 78"
-            className={className}
-        >
-            <path
-                fill="currentColor"
-                d="M26.52 77.21h-5.75c-6.83 0-12.38-5.56-12.38-12.38V48.38C8.39 43.76 4.63 40 .01 40v-4c4.62 0 8.38-3.76 8.38-8.38V12.4C8.38 5.56 13.94 0 20.77 0h5.75v4h-5.75c-4.62 0-8.38 3.76-8.38 8.38V27.6c0 4.34-2.25 8.17-5.64 10.38 3.39 2.21 5.64 6.04 5.64 10.38v16.45c0 4.62 3.76 8.38 8.38 8.38h5.75v4.02Z"
-            ></path>
-        </svg>
-    );
-};
-
+const techStack = [
+    { name: "React", icon: Atom },
+    { name: "Python", icon: Braces },
+    { name: "FastAPI", icon: Rocket },
+    { name: "TypeScript", icon: FileCode2 },
+    { name: "AWS Bedrock", icon: Cpu },
+    { name: "Cloudflare", icon: Cloud },
+    { name: "Auth.js", icon: ShieldCheck },
+];
 
 const ScrollAnimationShowcase = () => {
-    // --- Section 1: "CODESHERPA" (Text Animation) ---
     const targetRef1 = useRef(null);
     const { scrollYProgress: scrollYProgress1 } = useScroll({
         target: targetRef1,
-        offset: ["start end", "end start"]
+        offset: ["start end", "end start"],
     });
+
+    const targetRef2 = useRef(null);
 
     const text1 = "CODESHERPA";
     const chars1 = text1.split("");
     const centerIndex1 = Math.floor(chars1.length / 2);
 
-    // --- Section 2: Tech Stack (Icon Animation - Adjusted for this demo to use icons) ---
-    // Using Lucide icons or simple placeholders if images aren't available
-    const targetRef2 = useRef(null);
-    const { scrollYProgress: scrollYProgress2 } = useScroll({
-        target: targetRef2,
-        offset: ["start end", "end start"]
-    });
-
-    // We can use emojis or simple text for V2 demo if images are not ready
-    const icons = ["⚛️", "🐍", "🚀", "💻", "🤖", "☁️", "🔐"];
-    const iconCenterIndex = Math.floor(icons.length / 2);
-
-
     return (
         <div className="w-full bg-transparent text-white relative z-10">
-
-            {/* Visual Indicator */}
             <div className="py-12 flex justify-center">
-                <span className="relative text-xs uppercase opacity-40">
+                <span className="relative text-xs uppercase tracking-[0.22em] opacity-40">
                     Scroll Down for Magic
                 </span>
             </div>
 
-            {/* --- Animation 1: Text Spread --- */}
             <div
                 ref={targetRef1}
-                className="relative min-h-[150vh] flex items-center justify-center overflow-hidden"
+                className="relative min-h-[140vh] flex items-center justify-center overflow-hidden"
             >
-                {/* Sticky container to keep content in view while we scroll through the height */}
-                <div className="sticky top-0 h-screen flex flex-col items-center justify-center">
-                    <h2 className="text-xl md:text-3xl font-bold mb-12 text-gray-500">
-                        The Future of Coding
-                    </h2>
-                    <div
+                <div className="sticky top-0 h-screen flex flex-col items-center justify-center px-4">
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.7 }}
+                        className="relative text-center mb-12"
+                    >
+                        <div className="future-title-glow" />
+                        <h2 className="relative text-xl md:text-3xl font-semibold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-blue-300 via-indigo-300 to-purple-300">
+                            The Future of Coding
+                        </h2>
+                    </motion.div>
+
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.98 }}
+                        whileInView={{ opacity: 1, scale: 1 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.75 }}
                         className="flex flex-wrap justify-center text-6xl md:text-9xl font-black uppercase tracking-tighter"
-                        style={{ perspective: "500px" }}
+                        style={{ perspective: "700px" }}
                     >
                         {chars1.map((char, index) => (
                             <CharacterV1
@@ -152,36 +100,54 @@ const ScrollAnimationShowcase = () => {
                                 scrollYProgress={scrollYProgress1}
                             />
                         ))}
-                    </div>
+                    </motion.div>
                 </div>
             </div>
 
-            {/* --- Animation 2: Icons/Items Arc --- */}
             <div
                 ref={targetRef2}
-                className="relative min-h-[150vh] flex items-center justify-center overflow-hidden"
+                className="relative min-h-[140vh] flex items-center justify-center overflow-hidden"
             >
-                <div className="sticky top-0 h-screen flex flex-col items-center justify-center gap-8">
-                    <div className="flex items-center justify-center gap-4 text-2xl md:text-4xl text-gray-300">
-                        <Bracket className="h-12 w-auto" />
-                        <span className="font-bold">Powered By Modern Stack</span>
-                        <Bracket className="h-12 w-auto scale-x-[-1]" />
-                    </div>
+                <div className="sticky top-0 h-screen flex flex-col items-center justify-center px-4 w-full">
+                    <motion.div
+                        initial={{ opacity: 0, y: 16 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.7 }}
+                        className="text-center mb-10"
+                    >
+                        <h3 className="text-2xl md:text-4xl font-bold text-slate-100 tracking-tight">
+                            Powered by Modern Stack
+                        </h3>
+                    </motion.div>
 
-                    <div className="flex flex-wrap justify-center gap-4 text-6xl md:text-8xl">
-                        {icons.map((item, index) => (
-                            <CharacterV2
-                                key={index}
-                                char={item}
-                                index={index}
-                                centerIndex={iconCenterIndex}
-                                scrollYProgress={scrollYProgress2}
-                            />
-                        ))}
+                    <div className="w-full max-w-6xl grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4 md:gap-5">
+                        {techStack.map((tech, index) => {
+                            const Icon = tech.icon;
+                            return (
+                                <motion.div
+                                    key={tech.name}
+                                    initial={{ opacity: 0, y: 20 }}
+                                    whileInView={{ opacity: 1, y: 0 }}
+                                    viewport={{ once: true }}
+                                    transition={{ duration: 0.55, delay: index * 0.05 }}
+                                    className="stack-tech-card rounded-2xl p-4 md:p-5 text-center"
+                                >
+                                    <div className="stack-tech-icon-wrap mx-auto mb-3">
+                                        <Icon
+                                            className="w-6 h-6 md:w-7 md:h-7 text-blue-200 stack-icon-float"
+                                            style={{ animationDelay: `${index * 0.22}s` }}
+                                        />
+                                    </div>
+                                    <p className="text-xs md:text-sm font-medium text-slate-200 leading-tight">
+                                        {tech.name}
+                                    </p>
+                                </motion.div>
+                            );
+                        })}
                     </div>
                 </div>
             </div>
-
         </div>
     );
 };

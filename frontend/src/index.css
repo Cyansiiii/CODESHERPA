@@ -133,3 +133,378 @@
   text-transform: uppercase;
   letter-spacing: -0.02em;
 }
+
+.demo-code-card {
+  position: relative;
+  background: linear-gradient(155deg, rgba(18, 23, 48, 0.68), rgba(7, 9, 22, 0.68));
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 16px 55px rgba(10, 18, 38, 0.65);
+  transition: transform 300ms ease, box-shadow 300ms ease, border-color 300ms ease;
+}
+
+.demo-code-card::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: 1.5rem;
+  padding: 1px;
+  background: linear-gradient(120deg, rgba(59, 130, 246, 0.85), rgba(99, 102, 241, 0.7), rgba(147, 51, 234, 0.85));
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  opacity: 0.7;
+  animation: demoGlowBorder 3.8s ease-in-out infinite alternate;
+}
+
+.demo-code-card:hover {
+  transform: translateY(-4px) scale(1.01);
+  box-shadow: 0 24px 80px rgba(46, 83, 210, 0.35);
+  border-color: rgba(99, 102, 241, 0.35);
+}
+
+.typing-code {
+  display: inline-block;
+  white-space: pre;
+  overflow: hidden;
+  max-width: 0;
+  animation: typingReveal 2.2s steps(95, end) 0.4s forwards;
+}
+
+.animate-code-cursor {
+  animation: blinkCursor 1s steps(2, start) infinite;
+}
+
+.animate-float-orb {
+  animation: floatOrb 7s ease-in-out infinite;
+}
+
+.animate-float-orb-delay {
+  animation: floatOrb 8.2s ease-in-out 0.8s infinite;
+}
+
+@keyframes demoGlowBorder {
+  0% {
+    opacity: 0.45;
+    filter: saturate(100%);
+  }
+
+  100% {
+    opacity: 0.92;
+    filter: saturate(125%);
+  }
+}
+
+@keyframes typingReveal {
+  from {
+    max-width: 0;
+  }
+
+  to {
+    max-width: 38rem;
+  }
+}
+
+@keyframes blinkCursor {
+  0%,
+  49% {
+    opacity: 1;
+  }
+
+  50%,
+  100% {
+    opacity: 0.15;
+  }
+}
+
+@keyframes floatOrb {
+  0%,
+  100% {
+    transform: translateY(0) translateX(0);
+  }
+
+  50% {
+    transform: translateY(-14px) translateX(8px);
+  }
+}
+
+.hero-light-orb {
+  animation: heroLightFloat 9s ease-in-out infinite;
+}
+
+.hero-light-orb-delayed {
+  animation: heroLightFloat 11s ease-in-out 1.2s infinite;
+}
+
+.future-title-glow {
+  position: absolute;
+  left: 50%;
+  top: 45%;
+  transform: translate(-50%, -50%);
+  width: 20rem;
+  height: 6rem;
+  border-radius: 9999px;
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.45), rgba(59, 130, 246, 0.18) 45%, transparent 72%);
+  filter: blur(24px);
+  pointer-events: none;
+}
+
+.stack-tech-card {
+  background: linear-gradient(150deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02));
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  transition: transform 280ms ease, box-shadow 280ms ease, border-color 280ms ease;
+}
+
+.stack-tech-card:hover {
+  transform: translateY(-6px);
+  border-color: rgba(129, 140, 248, 0.5);
+  box-shadow: 0 22px 45px -24px rgba(59, 130, 246, 0.75);
+}
+
+.stack-tech-icon-wrap {
+  width: 3rem;
+  height: 3rem;
+  display: grid;
+  place-items: center;
+  border-radius: 0.85rem;
+  border: 1px solid rgba(191, 219, 254, 0.32);
+  background: radial-gradient(circle at 30% 20%, rgba(99, 102, 241, 0.5), rgba(30, 41, 59, 0.4));
+  box-shadow: inset 0 0 20px rgba(59, 130, 246, 0.18);
+}
+
+.stack-icon-float {
+  animation: stackIconFloat 3.2s ease-in-out infinite;
+}
+
+@keyframes heroLightFloat {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+    opacity: 0.8;
+  }
+
+  50% {
+    transform: translate3d(8px, -16px, 0);
+    opacity: 1;
+  }
+}
+
+@keyframes stackIconFloat {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+.scroll-indicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.scroll-indicator-track {
+  position: relative;
+  width: 1px;
+  height: 52px;
+  background: linear-gradient(to bottom, rgba(96, 165, 250, 0.12), rgba(96, 165, 250, 0.45), rgba(96, 165, 250, 0.12));
+}
+
+.scroll-indicator-dot {
+  position: absolute;
+  left: 50%;
+  top: 2px;
+  transform: translateX(-50%);
+  width: 7px;
+  height: 7px;
+  border-radius: 9999px;
+  background: #60a5fa;
+  box-shadow: 0 0 10px rgba(96, 165, 250, 0.85), 0 0 20px rgba(59, 130, 246, 0.45);
+  animation: scrollDotMove 1.7s ease-in-out infinite;
+}
+
+.scroll-indicator-text {
+  font-size: 10px;
+  letter-spacing: 0.28em;
+  font-weight: 700;
+  color: rgba(148, 163, 184, 0.8);
+}
+
+@keyframes scrollDotMove {
+  0% {
+    top: 2px;
+    opacity: 0.2;
+  }
+
+  25% {
+    opacity: 1;
+  }
+
+  100% {
+    top: 43px;
+    opacity: 0.15;
+  }
+}
+
+.agent-glass-card {
+  transform: rotateX(0deg) rotateY(0deg) scale(1);
+  transition: transform 0.12s ease, box-shadow 0.4s ease;
+  will-change: transform;
+}
+
+.agent-glow-orb {
+  position: absolute;
+  width: 180px;
+  height: 180px;
+  border-radius: 9999px;
+  filter: blur(60px);
+  opacity: 0;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle, rgba(129, 140, 248, 0.6), rgba(59, 130, 246, 0.18) 55%, transparent 72%);
+  pointer-events: none;
+  transition: opacity 0.45s ease, left 0.12s ease, top 0.12s ease;
+  z-index: 0;
+}
+
+.agent-glass-card:hover .agent-glow-orb {
+  opacity: 0.55;
+}
+
+.agent-particles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  border-radius: 1.5rem;
+  z-index: 1;
+}
+
+.agent-particle {
+  position: absolute;
+  bottom: 14%;
+  width: 4px;
+  height: 4px;
+  border-radius: 9999px;
+  background: rgba(148, 163, 184, 0.9);
+  box-shadow: 0 0 10px rgba(129, 140, 248, 0.85);
+  opacity: 0;
+  animation: agentParticleFloat 3s ease-in infinite;
+}
+
+.agent-glass-card:hover .agent-particle {
+  opacity: 1;
+}
+
+.agent-card-inner {
+  transform: translateZ(18px);
+  transform-style: preserve-3d;
+}
+
+.agent-glass-card:hover .agent-card-inner {
+  transition: transform 0.3s ease;
+  transform: translateZ(28px);
+}
+
+@keyframes agentParticleFloat {
+  0% {
+    transform: translateY(0) scale(1);
+    opacity: 0;
+  }
+
+  20% {
+    opacity: 0.85;
+  }
+
+  100% {
+    transform: translateY(-120px) scale(0.25);
+    opacity: 0;
+  }
+}
+
+.workflow-glass-card {
+  transform: rotateX(0deg) rotateY(0deg) scale(1);
+  transition: transform 0.12s ease, box-shadow 0.4s ease;
+  will-change: transform;
+  transform-style: preserve-3d;
+}
+
+.workflow-glow-orb {
+  position: absolute;
+  width: 170px;
+  height: 170px;
+  border-radius: 9999px;
+  filter: blur(56px);
+  opacity: 0;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle, rgba(129, 140, 248, 0.55), rgba(59, 130, 246, 0.16) 55%, transparent 72%);
+  pointer-events: none;
+  transition: opacity 0.45s ease, left 0.12s ease, top 0.12s ease;
+  z-index: 0;
+}
+
+.workflow-glass-card:hover .workflow-glow-orb {
+  opacity: 0.5;
+}
+
+.workflow-particles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  border-radius: 1rem;
+  z-index: 1;
+}
+
+.workflow-particle {
+  position: absolute;
+  bottom: 12%;
+  width: 3.5px;
+  height: 3.5px;
+  border-radius: 9999px;
+  background: rgba(148, 163, 184, 0.85);
+  box-shadow: 0 0 8px rgba(129, 140, 248, 0.75);
+  opacity: 0;
+  animation: workflowParticleFloat 3s ease-in infinite;
+}
+
+.workflow-glass-card:hover .workflow-particle {
+  opacity: 1;
+}
+
+.workflow-card-inner {
+  transform: translateZ(14px);
+  transform-style: preserve-3d;
+}
+
+.workflow-glass-card:hover .workflow-card-inner {
+  transition: transform 0.3s ease;
+  transform: translateZ(24px);
+}
+
+@keyframes workflowParticleFloat {
+  0% {
+    transform: translateY(0) scale(1);
+    opacity: 0;
+  }
+
+  20% {
+    opacity: 0.8;
+  }
+
+  100% {
+    transform: translateY(-110px) scale(0.24);
+    opacity: 0;
+  }
+}

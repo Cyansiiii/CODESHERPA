@@ -1,78 +1,46 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 import {
     Sparkles, ArrowRight, Code2, Brain, Zap, Shield,
-    Globe, MessageSquare, Github, CheckCircle2, Star,
-    TrendingUp, Users, Award, Rocket, Bug, Database, Cloud, Bot, Terminal
+    Globe, Github, CheckCircle2, Users, Award, Rocket, Bug, Database, Cloud, Bot, Terminal,
+    BadgeCheck, MessageCircle, Repeat2, Heart
 } from 'lucide-react'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
-import TextRoll from '../components/TextRoll'
-import HoverExpandGallery from '../components/HoverExpandGallery'
+import AgentsShowcase from '../components/AgentsShowcase'
 import LogoLoop from '../components/LogoLoop'
-import ScrollAnimationShowcase from '../components/ScrollAnimationShowcase'
 import StatsCounter from '../components/StatsCounter'
-import TestimonialCard from '../components/TestimonialCard'
 import DarkVeil from '../components/DarkVeil'
-import MultiAgentIcon from '../assets/images/multi-agent-architecture.svg'
-import SmartCodeReviewIcon from '../assets/images/smart-code-review.svg'
-import MultilingualIcon from '../assets/images/multilingual-support.svg'
-import RealTimeChatIcon from '../assets/images/real-time-chat.svg'
-import WhatsAppIcon from '../assets/images/whatsapp-integration.svg'
 
 // ... existing imports
 
 const HomePage = () => {
     const navigate = useNavigate()
-    const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
+    const workflowParticleDelays = [0, 0.25, 0.5, 0.75, 1, 1.2, 1.45, 1.7]
 
-    useEffect(() => {
-        const handleMouseMove = (e) => {
-            setMousePosition({ x: e.clientX, y: e.clientY })
-        }
-        window.addEventListener('mousemove', handleMouseMove)
-        return () => window.removeEventListener('mousemove', handleMouseMove)
-    }, [])
+    const handleWorkflowMove = (e, glow) => {
+        const card = e.currentTarget
+        const rect = card.getBoundingClientRect()
+        const cx = rect.left + rect.width / 2
+        const cy = rect.top + rect.height / 2
+        const dx = (e.clientX - cx) / (rect.width / 2)
+        const dy = (e.clientY - cy) / (rect.height / 2)
+        const tiltX = -dy * 16
+        const tiltY = dx * 16
 
-    const features = [
-        {
-            icon: <img src={MultiAgentIcon} className="w-8 h-8" alt="Multi-Agent AI System" />,
-            title: "Multi-Agent AI System",
-            description: "Specialized AI agents for code review, learning, and documentation",
-            color: "from-blue-500/80 to-cyan-500/80"
-        },
-        {
-            icon: <img src={SmartCodeReviewIcon} className="w-8 h-8" alt="Smart Code Review" />,
-            title: "Smart Code Review",
-            description: "Automated PR reviews with security checks and best practices",
-            color: "from-purple-500/80 to-pink-500/80"
-        },
-        {
-            icon: <img src={MultilingualIcon} className="w-8 h-8" alt="Multilingual Support" />,
-            title: "Multilingual Support",
-            description: "Explain code in Hindi, English, or Hinglish for Indian developers",
-            color: "from-orange-500/80 to-red-500/80"
-        },
-        {
-            icon: <img src={RealTimeChatIcon} className="w-8 h-8" alt="Real-Time Chat" />,
-            title: "Real-Time Chat",
-            description: "Instant responses via WebSocket for seamless interaction",
-            color: "from-yellow-500/80 to-orange-500/80"
-        },
-        {
-            icon: <Shield className="w-8 h-8" />,
-            title: "Security First",
-            description: "OWASP Top 10 vulnerability detection and AWS optimization",
-            color: "from-green-500/80 to-emerald-500/80"
-        },
-        {
-            icon: <img src={WhatsAppIcon} className="w-8 h-8" alt="WhatsApp Integration" />,
-            title: "WhatsApp Integration",
-            description: "Code on the go with mobile-first WhatsApp support",
-            color: "from-teal-500/80 to-cyan-500/80"
+        card.style.transform = `rotateX(${tiltX}deg) rotateY(${tiltY}deg) scale(1.03)`
+        card.style.transition = 'transform 0.08s ease, box-shadow 0.4s ease'
+        card.style.boxShadow = `0 18px 50px rgba(0,0,0,0.4), 0 0 0 1px ${glow}, 0 0 42px ${glow}`
+
+        const orb = card.querySelector('.workflow-glow-orb')
+        if (orb) {
+            const orbX = 50 + dx * 28
+            const orbY = 50 + dy * 28
+            orb.style.left = `${orbX}%`
+            orb.style.top = `${orbY}%`
         }
-    ]
+    }
 
     const stats = [
         { value: 10000, suffix: "+", label: "Lines of Code Reviewed", icon: <Code2 className="text-blue-400" /> },
@@ -81,28 +49,144 @@ const HomePage = () => {
         { value: 99, suffix: "%", label: "Satisfaction Rate", icon: <Award className="text-yellow-400" /> }
     ]
 
-    const testimonials = [
+    const workflowSteps = [
         {
-            name: "Rahul Sharma",
-            role: "Senior Developer at TCS",
-            content: "CodeSherpa has transformed how we review code. The Hindi explanations help our junior developers learn faster!",
-            avatar: "RS",
-            rating: 5
+            num: "01",
+            icon: "📋",
+            label: "Input",
+            labelColor: "text-blue-300",
+            title: "Paste Code",
+            desc: "Drop your code, PR link, or GitHub repo URL. Supports 40+ languages.",
+            tags: ["Python", "JS", "Go", "Java"],
+            tagClass: "border-blue-400/25 text-blue-300 bg-blue-500/10",
+            nodeBg: "from-blue-700 to-blue-500",
+            cardBorder: "border-blue-400/25 hover:border-blue-400/45",
+            cardGlow: "hover:shadow-[0_20px_40px_rgba(59,130,246,0.08)]",
+            glowColor: "rgba(59,130,246,0.22)",
+            stat: "40+",
+            statLabel: "languages supported"
         },
         {
-            name: "Priya Patel",
-            role: "Tech Lead at Infosys",
-            content: "The multi-agent system is brilliant. It catches security issues we would have missed. A must-have tool!",
-            avatar: "PP",
-            rating: 5
+            num: "02",
+            icon: "🤖",
+            label: "Orchestrator",
+            labelColor: "text-purple-300",
+            title: "AI Analysis",
+            desc: "Orchestrator agent classifies intent and routes to the right specialist with 99.2% accuracy.",
+            tags: ["Claude 3.5", "AWS Bedrock"],
+            tagClass: "border-purple-400/25 text-purple-300 bg-purple-500/10",
+            nodeBg: "from-violet-700 to-purple-500",
+            cardBorder: "border-purple-400/25 hover:border-purple-400/45",
+            cardGlow: "hover:shadow-[0_20px_40px_rgba(139,92,246,0.08)]",
+            glowColor: "rgba(139,92,246,0.22)",
+            stat: "99.2%",
+            statLabel: "routing accuracy"
         },
         {
-            name: "Amit Kumar",
-            role: "Freelance Developer",
-            content: "WhatsApp integration is a game-changer. I can review code while commuting. Truly built for India!",
-            avatar: "AK",
-            rating: 5
+            num: "03",
+            icon: "🐛",
+            label: "Review Monk",
+            labelColor: "text-orange-300",
+            title: "Bug Detection",
+            desc: "Deep PR analysis catches logic errors, code smells, and style violations instantly.",
+            tags: ["Logic Errors", "Smells"],
+            tagClass: "border-orange-400/25 text-orange-300 bg-orange-500/10",
+            nodeBg: "from-orange-700 to-orange-500",
+            cardBorder: "border-orange-400/25 hover:border-orange-400/45",
+            cardGlow: "hover:shadow-[0_20px_40px_rgba(249,115,22,0.08)]",
+            glowColor: "rgba(249,115,22,0.22)",
+            stat: "28",
+            statLabel: "bugs caught avg/month"
+        },
+        {
+            num: "04",
+            icon: "🛡️",
+            label: "Security Guard",
+            labelColor: "text-green-300",
+            title: "Security Check",
+            desc: "OWASP Top 10 scanner detects injections, secrets, and AWS misconfigurations.",
+            tags: ["OWASP", "CVE Scan"],
+            tagClass: "border-emerald-400/25 text-emerald-300 bg-emerald-500/10",
+            nodeBg: "from-emerald-700 to-green-500",
+            cardBorder: "border-emerald-400/25 hover:border-emerald-400/45",
+            cardGlow: "hover:shadow-[0_20px_40px_rgba(34,197,94,0.08)]",
+            glowColor: "rgba(34,197,94,0.22)",
+            stat: "100%",
+            statLabel: "OWASP coverage"
+        },
+        {
+            num: "05",
+            icon: "✅",
+            label: "Output",
+            labelColor: "text-cyan-300",
+            title: "Optimized Code",
+            desc: "Get actionable fixes, explanations in Hindi/English, and a quality score.",
+            tags: ["Hindi", "Quality Score"],
+            tagClass: "border-cyan-400/25 text-cyan-300 bg-cyan-500/10",
+            nodeBg: "from-cyan-700 to-cyan-500",
+            cardBorder: "border-cyan-400/25 hover:border-cyan-400/45",
+            cardGlow: "hover:shadow-[0_20px_40px_rgba(6,182,212,0.08)]",
+            glowColor: "rgba(6,182,212,0.22)",
+            stat: "9.4/10",
+            statLabel: "avg quality score"
         }
+    ]
+
+    const tweetWall = [
+        {
+            avatar: "RS", avatarClass: "from-blue-700 to-blue-500", name: "Rahul Sharma", verified: true, handle: "@rahul_dev_tcs",
+            chips: ["TCS", "Senior Dev"], glow: "hover:shadow-[inset_0_0_30px_rgba(59,130,246,0.08)]",
+            body: "Just found a critical SQL injection in our prod codebase thanks to @CodeSherpa. This vulnerability had been sitting there for 2 years undetected.",
+            tag: "Security Win", tagClass: "border-blue-400/25 text-blue-300 bg-blue-500/10",
+            comments: "47", reposts: "128", likes: "892", time: "Mar 5, 2026"
+        },
+        {
+            avatar: "PP", avatarClass: "from-violet-700 to-purple-500", name: "Priya Patel", verified: false, handle: "@priya_techlead",
+            chips: ["Infosys", "Tech Lead"], glow: "hover:shadow-[inset_0_0_30px_rgba(139,92,246,0.08)]",
+            body: "Hindi mode is wild. I asked async/await and got a chai analogy that my entire fresher batch understood instantly.",
+            tag: "Hinglish Mode", tagClass: "border-purple-400/25 text-purple-300 bg-purple-500/10",
+            comments: "83", reposts: "214", likes: "1.4K", time: "Mar 4, 2026"
+        },
+        {
+            avatar: "MS", avatarClass: "from-emerald-700 to-green-500", name: "Manish Singh", verified: true, handle: "@manish_paytm_eng",
+            chips: ["Paytm", "Lead Eng"], glow: "hover:shadow-[inset_0_0_30px_rgba(34,197,94,0.08)]",
+            body: "CodeSherpa reviewed this and gave 9.2/10 quality score. It flagged missing input validation in seconds.",
+            code: [
+                "# flagged: missing validation",
+                "def process_payment(user_id, amount):",
+                "  query = f\"SELECT * FROM users WHERE id={user_id}\"",
+                "  # fix: use parameterized query"
+            ],
+            tag: "Code Quality: 9.2/10", tagClass: "border-green-400/25 text-green-300 bg-green-500/10",
+            comments: "62", reposts: "189", likes: "743", time: "Mar 3, 2026"
+        },
+        {
+            avatar: "AK", avatarClass: "from-orange-700 to-orange-500", name: "Amit Kumar", verified: false, handle: "@amit_freelance_dev",
+            chips: ["Freelance"], glow: "hover:shadow-[inset_0_0_30px_rgba(249,115,22,0.08)]",
+            body: "Sent a PR link on WhatsApp and got full review in 40 seconds while commuting. Truly built for India.",
+            tag: "WhatsApp Integration", tagClass: "border-orange-400/25 text-orange-300 bg-orange-500/10",
+            comments: "31", reposts: "97", likes: "2.1K", time: "Mar 6, 2026"
+        },
+        {
+            avatar: "ST", avatarClass: "from-pink-700 to-pink-500", name: "Sonal Trivedi", verified: true, handle: "@sonal_ola_em",
+            chips: ["Ola", "Eng Manager"], glow: "hover:shadow-[inset_0_0_30px_rgba(236,72,153,0.08)]",
+            body: "Review cycle dropped from 2 days to under 4 hours after GitHub webhook integration with CodeSherpa.",
+            tag: "75% faster reviews", tagClass: "border-purple-400/25 text-purple-300 bg-purple-500/10",
+            comments: "104", reposts: "387", likes: "3.2K", time: "Mar 1, 2026"
+        },
+        {
+            avatar: "NC", avatarClass: "from-cyan-700 to-cyan-500", name: "Neha Chaudhary", verified: false, handle: "@neha_sec_eng",
+            chips: ["Juspay", "Security Eng"], glow: "hover:shadow-[inset_0_0_30px_rgba(6,182,212,0.08)]",
+            body: "Quick PR check found a hardcoded AWS key that had been in the repo for 4 months. Install this now.",
+            comments: "156", reposts: "512", likes: "4.8K", time: "Feb 28, 2026"
+        }
+    ]
+
+    const communityStats = [
+        { value: "5,000+", label: "Active Devs" },
+        { value: "4.9★", label: "Avg Rating" },
+        { value: "50K+", label: "PRs Reviewed" },
+        { value: "₹2Cr+", label: "Savings" }
     ]
 
     return (
@@ -118,18 +202,23 @@ const HomePage = () => {
 
             {/* Hero Section */}
             <section className="relative min-h-screen flex items-center justify-center px-4 pt-20 overflow-hidden">
+                <div className="pointer-events-none absolute inset-0">
+                    <div className="hero-light-orb absolute top-[18%] left-[14%] w-72 h-72 bg-blue-500/15 rounded-full blur-3xl" />
+                    <div className="hero-light-orb-delayed absolute bottom-[18%] right-[12%] w-80 h-80 bg-purple-500/18 rounded-full blur-3xl" />
+                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_38%,rgba(99,102,241,0.12),transparent_52%)]" />
+                </div>
                 <div className="relative z-10 max-w-7xl mx-auto text-center">
 
                     {/* Badge */}
                     <motion.div
-                        initial={{ opacity: 0, y: 20 }}
+                        initial={{ opacity: 0, y: 24 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8 }}
-                        className="inline-flex items-center gap-2 px-4 py-1.5 glass-panel rounded-full mb-8"
+                        transition={{ duration: 0.7 }}
+                        className="inline-flex items-center gap-2 px-4 py-2 glass-panel rounded-full mb-8 border border-indigo-300/20 shadow-[0_0_35px_-18px_rgba(99,102,241,0.8)]"
                     >
-                        <Sparkles className="w-3.5 h-3.5 text-amber-300" />
-                        <span className="text-xs font-medium tracking-wide text-slate-300 uppercase">
-                            Powered by AWS Bedrock & Claude 3.5 Sonnet
+                        <Sparkles className="w-3.5 h-3.5 text-blue-300" />
+                        <span className="text-[11px] md:text-xs font-semibold tracking-[0.16em] text-slate-200 uppercase">
+                            POWERED BY AWS BEDROCK & CLAUDE 3.5 SONNET
                         </span>
                     </motion.div>
 
@@ -137,16 +226,17 @@ const HomePage = () => {
                     <motion.h1
                         initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8, delay: 0.2 }}
+                        transition={{ duration: 0.8, delay: 0.15 }}
                         className="text-6xl md:text-9xl font-black mb-6 leading-[0.9] tracking-tight text-white relative z-20"
                     >
                         <div className="relative inline-block">
-                            <span className="text-transparent bg-clip-text bg-gradient-to-b from-white via-white to-white/50 pb-2 font-black text-6xl md:text-9xl tracking-tight leading-[0.9]">
+                            <span className="pointer-events-none absolute inset-0 blur-2xl opacity-75 bg-[radial-gradient(circle_at_50%_56%,rgba(99,102,241,0.55),transparent_62%)]" />
+                            <span className="text-transparent bg-clip-text bg-gradient-to-b from-white via-blue-100 to-slate-300/70 pb-2 font-black text-6xl md:text-9xl tracking-tight leading-[0.9] drop-shadow-[0_0_30px_rgba(99,102,241,0.35)]">
                                 CODESHERPA
                             </span>
                         </div>
                         <br />
-                        <span className="text-3xl md:text-5xl font-light text-slate-400 mt-2 block tracking-normal">
+                        <span className="text-3xl md:text-5xl font-light text-slate-300/90 mt-2 block tracking-normal">
                             Your AI Pair Programmer
                         </span>
                     </motion.h1>
@@ -155,26 +245,26 @@ const HomePage = () => {
                     <motion.p
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8, delay: 0.4 }}
-                        className="text-lg md:text-xl text-slate-400 mb-12 max-w-2xl mx-auto leading-relaxed"
+                        transition={{ duration: 0.8, delay: 0.35 }}
+                        className="text-lg md:text-xl text-slate-300/80 mb-12 max-w-2xl mx-auto leading-relaxed"
                     >
-                        Review code, learn faster, and ship with confidence using our multi-agent AI platform built specifically for Indian developers. <span className="inline-block hover:scale-125 transition-transform duration-300 ease-out cursor-default">🇮🇳</span>
+                        Review code, learn faster, and ship with confidence using our multi-agent AI platform built specifically for developers.
                     </motion.p>
 
                     {/* CTA Buttons */}
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8, delay: 0.6 }}
+                        transition={{ duration: 0.8, delay: 0.5 }}
                         className="flex flex-col sm:flex-row gap-5 justify-center items-center"
                     >
                         <button
                             onClick={() => navigate('/chat')}
-                            className="group relative px-8 py-4 rounded-full font-semibold text-white bg-blue-600 overflow-hidden transition-all duration-300 hover:shadow-[0_0_40px_-10px_rgba(59,130,246,0.5)] active:scale-95"
+                            className="group relative px-8 py-4 rounded-full font-semibold text-white bg-blue-600 overflow-hidden transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_0_45px_-8px_rgba(59,130,246,0.8)] active:scale-95"
                         >
-                            <div className="absolute inset-0 bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-600 opacity-100 group-hover:opacity-90 transition-opacity" />
+                            <div className="absolute inset-0 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 opacity-100 group-hover:opacity-95 transition-opacity" />
                             <div className="absolute inset-0 opacity-0 group-hover:opacity-20 bg-[linear-gradient(45deg,transparent_25%,rgba(255,255,255,0.3)_50%,transparent_75%)] bg-[length:250%_250%] animate-shimmer transition-opacity" />
-
+                            <div className="absolute -inset-x-6 -bottom-6 h-8 bg-blue-500/50 blur-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
                             <span className="relative z-10 flex items-center gap-2">
                                 Start Coding Smarter
                                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -183,7 +273,7 @@ const HomePage = () => {
 
                         <button
                             onClick={() => navigate('/features')}
-                            className="px-8 py-4 glass-button rounded-full font-semibold text-slate-300 hover:text-white transition-colors flex items-center gap-2 group"
+                            className="px-8 py-4 glass-button rounded-full font-semibold text-slate-300 hover:text-white transition-all duration-300 hover:-translate-y-0.5 hover:border-blue-300/40 hover:shadow-[0_0_35px_-12px_rgba(129,140,248,0.7)] flex items-center gap-2 group"
                         >
                             Explore Features
                             <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 group-hover:scale-125 transition-transform" />
@@ -194,7 +284,7 @@ const HomePage = () => {
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8, delay: 0.8 }}
+                        transition={{ duration: 0.8, delay: 0.65 }}
                         className="mt-20 flex flex-wrap justify-center gap-6"
                     >
                         {[
@@ -208,6 +298,111 @@ const HomePage = () => {
                             </div>
                         ))}
                     </motion.div>
+                </div>
+
+                <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 pointer-events-none">
+                    <div className="scroll-indicator">
+                        <div className="scroll-indicator-track">
+                            <span className="scroll-indicator-dot" />
+                        </div>
+                        <p className="scroll-indicator-text">SCROLL</p>
+                    </div>
+                </div>
+            </section>
+
+            {/* Demo Section */}
+            <section className="relative py-24 md:py-28 px-4 z-10">
+                <div className="max-w-7xl mx-auto min-h-[70vh] flex items-center">
+                    <div className="w-full grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+                        <motion.div
+                            initial={{ opacity: 0, y: 24 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.7 }}
+                            className="max-w-xl"
+                        >
+                            <p className="text-xs md:text-sm font-semibold tracking-[0.28em] text-blue-300/90 mb-5">
+                                SEE IT IN ACTION
+                            </p>
+                            <h2 className="text-4xl md:text-6xl font-black leading-[1.05] tracking-tight text-white mb-6">
+                                Code review in seconds, not hours
+                            </h2>
+                            <p className="text-base md:text-lg leading-relaxed text-slate-300/90 max-w-lg mb-10">
+                                Just paste your code. CODESHERPA analyzes structure, logic, complexity, and security in one go - with actionable feedback.
+                            </p>
+
+                            <button
+                                onClick={() => navigate('/chat')}
+                                className="group relative inline-flex items-center justify-center px-8 py-3.5 rounded-full font-semibold text-white overflow-hidden transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_30px_-6px_rgba(59,130,246,0.75)] active:scale-95"
+                            >
+                                <span className="absolute inset-0 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500" />
+                                <span className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity bg-[radial-gradient(circle_at_25%_10%,rgba(255,255,255,0.35),transparent_55%)]" />
+                                <span className="relative z-10 flex items-center gap-2">
+                                    Try Live Demo
+                                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
+                                </span>
+                            </button>
+                        </motion.div>
+
+                        <motion.div
+                            initial={{ opacity: 0, x: 24 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.75, delay: 0.1 }}
+                            className="relative"
+                        >
+                            <div className="pointer-events-none absolute -top-10 -right-8 w-40 h-40 bg-purple-500/20 blur-3xl rounded-full animate-float-orb" />
+                            <div className="pointer-events-none absolute -bottom-8 -left-8 w-44 h-44 bg-blue-500/20 blur-3xl rounded-full animate-float-orb-delay" />
+
+                            <div className="demo-code-card group rounded-3xl overflow-hidden">
+                                <div className="px-5 py-4 border-b border-white/10 bg-white/[0.03] flex items-center justify-between">
+                                    <div className="flex items-center gap-2.5">
+                                        <span className="w-2.5 h-2.5 rounded-full bg-rose-400/90" />
+                                        <span className="w-2.5 h-2.5 rounded-full bg-amber-300/90" />
+                                        <span className="w-2.5 h-2.5 rounded-full bg-emerald-400/90" />
+                                    </div>
+                                    <div className="text-xs font-medium tracking-wide text-slate-300 flex items-center gap-2">
+                                        review.py
+                                        <span className="inline-block w-1.5 h-4 bg-blue-300/80 animate-code-cursor" />
+                                    </div>
+                                </div>
+
+                                <div className="p-5 md:p-6 space-y-5 bg-gradient-to-b from-[#0f1125]/75 to-[#080913]/85">
+                                    <div className="rounded-xl border border-white/10 bg-black/30 p-4">
+                                        <pre className="typing-code text-sm leading-6 overflow-x-auto">
+                                            <code>
+                                                <span className="text-purple-300">async def</span> <span className="text-blue-300">process_user_data</span><span className="text-slate-300">(</span><span className="text-orange-300">user_id</span><span className="text-slate-300">):</span>{"\n"}
+                                                {"    "}query = <span className="text-emerald-300">f"SELECT * FROM users WHERE id=&#123;user_id&#125;"</span>{"\n"}
+                                                {"    "}result = <span className="text-purple-300">await</span> <span className="text-blue-300">db.execute</span><span className="text-slate-300">(query)</span>{"\n"}
+                                                {"    "}return result
+                                            </code>
+                                        </pre>
+                                    </div>
+
+                                    <div className="rounded-xl border border-amber-300/20 bg-amber-500/10 p-4">
+                                        <p className="text-sm font-semibold text-amber-200 mb-3">⚠ CODESHERPA detected 2 issues:</p>
+                                        <div className="space-y-2.5 text-sm leading-relaxed">
+                                            <p className="text-slate-200">1. <span className="text-rose-300 font-medium">SQL Injection vulnerability (HIGH)</span></p>
+                                            <p className="text-slate-300">Use parameterized queries instead</p>
+                                            <p className="text-slate-200">2. <span className="text-amber-300 font-medium">No input validation (MEDIUM)</span></p>
+                                            <p className="text-slate-300">Validate user_id type &amp; range</p>
+                                        </div>
+                                    </div>
+
+                                    <div className="rounded-xl border border-emerald-300/20 bg-emerald-500/10 p-4">
+                                        <p className="text-xs tracking-wide uppercase font-semibold text-emerald-200 mb-2">Suggested fix</p>
+                                        <pre className="text-sm leading-6 overflow-x-auto">
+                                            <code>
+                                                <span className="text-purple-300">async def</span> <span className="text-blue-300">process_user_data</span><span className="text-slate-300">(</span><span className="text-orange-300">user_id: int</span><span className="text-slate-300">):</span>{"\n"}
+                                                {"    "}query = <span className="text-emerald-300">"SELECT * FROM users WHERE id=$1"</span>{"\n"}
+                                                {"    "}return <span className="text-purple-300">await</span> <span className="text-blue-300">db.execute</span><span className="text-slate-300">(query, [user_id])</span>
+                                            </code>
+                                        </pre>
+                                    </div>
+                                </div>
+                            </div>
+                        </motion.div>
+                    </div>
                 </div>
             </section>
 
@@ -258,29 +453,148 @@ const HomePage = () => {
                 </div>
             </section>
 
-            {/* Scroll Animation Showcase - No change needed, fits well */}
-            <ScrollAnimationShowcase />
+            {/* Specialized Agents Showcase */}
+            <AgentsShowcase />
 
             {/* Features Section */}
             <section className="relative py-32 px-4 z-10">
-                <div className="max-w-7xl mx-auto">
+                <div className="pointer-events-none absolute inset-0">
+                    <div className="absolute inset-0 bg-[radial-gradient(ellipse_900px_500px_at_50%_-60px,rgba(88,28,235,0.28),transparent_70%)]" />
+                    <div className="absolute inset-0 bg-[radial-gradient(ellipse_420px_320px_at_95%_40%,rgba(59,130,246,0.07),transparent_60%)]" />
+                    <div className="absolute inset-0 bg-[radial-gradient(ellipse_420px_320px_at_0%_80%,rgba(139,92,246,0.07),transparent_60%)]" />
+                </div>
+                <div className="max-w-[1280px] mx-auto">
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                         transition={{ duration: 0.8 }}
-                        className="text-center mb-20"
+                        className="relative text-center mb-20"
                     >
-                        <h2 className="text-4xl md:text-6xl font-black mb-6 tracking-tight text-white">
-                            Powerful Features
+                        <p className="inline-flex items-center gap-3 text-[11px] tracking-[0.22em] uppercase font-semibold text-blue-300 mb-4">
+                            <span className="w-7 h-px bg-blue-300/80" />
+                            How It Works
+                            <span className="w-7 h-px bg-blue-300/80" />
+                        </p>
+                        <h2 className="text-4xl md:text-6xl font-black mb-6 tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-white via-blue-100 to-purple-200">
+                            AI Agents Workflow
                         </h2>
-                        <p className="text-xl text-slate-400 max-w-2xl mx-auto font-light">
-                            Expertly crafted tools to help you build, debug, and deploy faster.
+                        <p className="text-base md:text-lg text-slate-400 max-w-2xl mx-auto font-light leading-relaxed">
+                            Paste your code once. Watch five specialized agents work in perfect harmony.
                         </p>
                     </motion.div>
 
-                    <div className="w-full">
-                        <HoverExpandGallery items={features} />
+                    <div className="relative">
+                        <div className="hidden xl:block absolute left-[7.4rem] right-[7.4rem] top-10 h-[2px] z-0 bg-gradient-to-r from-blue-400/10 via-blue-400/50 via-purple-400/60 via-orange-400/60 via-green-400/60 to-cyan-400/10">
+                            <motion.div
+                                className="absolute top-1/2 -translate-y-1/2 h-1.5 w-16 rounded-full bg-gradient-to-r from-transparent via-white to-transparent blur-[1px]"
+                                animate={{ x: ["-4rem", "calc(100% + 4rem)"] }}
+                                transition={{ duration: 3, ease: "linear", repeat: Infinity }}
+                            />
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-6">
+                            {workflowSteps.map((step, index) => (
+                                <motion.div
+                                    key={step.num}
+                                    initial={{ opacity: 0, y: 24 }}
+                                    whileInView={{ opacity: 1, y: 0 }}
+                                    viewport={{ once: true }}
+                                    transition={{ duration: 0.5, delay: index * 0.12 }}
+                                    className="relative flex flex-col items-center px-1"
+                                >
+                                    <motion.div
+                                        whileHover={{ scale: 1.08 }}
+                                        className={`relative w-20 h-20 rounded-full bg-gradient-to-br ${step.nodeBg} grid place-items-center text-3xl mb-7 shadow-[0_0_30px_rgba(59,130,246,0.25)]`}
+                                    >
+                                        <motion.span
+                                            className="absolute -inset-2 rounded-full border border-white/20"
+                                            animate={{ scale: [0.9, 1.45], opacity: [0.6, 0] }}
+                                            transition={{ duration: 2.5, repeat: Infinity, delay: index * 0.5 }}
+                                        />
+                                        <span className="relative z-10">{step.icon}</span>
+                                    </motion.div>
+
+                                    {index < workflowSteps.length - 1 && (
+                                        <div className="hidden xl:flex absolute top-8 -right-4 text-slate-500">
+                                            <ArrowRight className="w-4 h-4" />
+                                        </div>
+                                    )}
+
+                                    <div
+                                        className={`workflow-glass-card w-full h-full min-h-[320px] rounded-2xl border bg-slate-900/70 backdrop-blur-md p-5 text-center flex flex-col relative overflow-hidden ${step.cardBorder} ${step.cardGlow}`}
+                                        onMouseMove={(e) => handleWorkflowMove(e, step.glowColor)}
+                                        onMouseLeave={(e) => {
+                                            e.currentTarget.style.transform = 'rotateX(0deg) rotateY(0deg) scale(1)'
+                                            e.currentTarget.style.transition = 'transform 0.6s cubic-bezier(0.23,1,0.32,1), box-shadow 0.4s ease'
+                                            e.currentTarget.style.boxShadow = ''
+                                            const orb = e.currentTarget.querySelector('.workflow-glow-orb')
+                                            if (orb) {
+                                                orb.style.left = '50%'
+                                                orb.style.top = '50%'
+                                            }
+                                        }}
+                                    >
+                                        <div className="workflow-glow-orb" />
+                                        <div className="workflow-particles">
+                                            {workflowParticleDelays.map((delay, i) => (
+                                                <span
+                                                    key={i}
+                                                    className="workflow-particle"
+                                                    style={{
+                                                        left: `${12 + i * 10}%`,
+                                                        animationDelay: `${delay}s`
+                                                    }}
+                                                />
+                                            ))}
+                                        </div>
+                                        <div className="workflow-card-inner relative z-10 flex flex-col h-full">
+                                        <p className={`text-[11px] uppercase tracking-[0.14em] font-bold mb-1 ${step.labelColor}`}>
+                                            {step.label}
+                                        </p>
+                                        <h3 className="text-lg font-extrabold text-slate-100 mb-2">{step.title}</h3>
+                                        <p className="text-[13px] leading-6 text-slate-500 mb-4">{step.desc}</p>
+
+                                        <div className="flex flex-wrap justify-center gap-1.5 mb-4">
+                                            {step.tags.map((tag) => (
+                                                <span key={tag} className={`px-2.5 py-1 rounded-full border text-[10px] font-semibold tracking-wide uppercase ${step.tagClass}`}>
+                                                    {tag}
+                                                </span>
+                                            ))}
+                                        </div>
+
+                                        <div className="pt-3 border-t border-white/10 mt-auto">
+                                            <p className={`text-2xl font-black ${step.labelColor}`}>{step.stat}</p>
+                                            <p className="text-[11px] tracking-wide uppercase text-slate-600">{step.statLabel}</p>
+                                        </div>
+                                        </div>
+                                    </div>
+                                </motion.div>
+                            ))}
+                        </div>
+
+                        <div className="mt-12 rounded-2xl border border-white/10 bg-slate-900/60 backdrop-blur-md px-6 md:px-10 py-6 flex flex-wrap items-center justify-between gap-6">
+                            <div className="flex flex-wrap gap-8">
+                                {[
+                                    { n: "~40s", l: "Full Pipeline" },
+                                    { n: "5", l: "AI Agents" },
+                                    { n: "50K+", l: "PRs Reviewed" },
+                                    { n: "₹2Cr+", l: "Dev Time Saved" }
+                                ].map((item) => (
+                                    <div key={item.l} className="text-center">
+                                        <p className="text-2xl md:text-3xl font-black text-transparent bg-clip-text bg-gradient-to-br from-white to-blue-200">{item.n}</p>
+                                        <p className="text-[11px] tracking-[0.12em] uppercase text-slate-600">{item.l}</p>
+                                    </div>
+                                ))}
+                            </div>
+
+                            <button
+                                onClick={() => navigate('/chat')}
+                                className="px-7 py-3 rounded-xl bg-gradient-to-r from-blue-500 to-violet-600 text-white font-semibold shadow-[0_0_30px_rgba(59,130,246,0.35)] hover:-translate-y-0.5 transition-all"
+                            >
+                                Try Live Demo →
+                            </button>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -353,6 +667,10 @@ const HomePage = () => {
 
             {/* Testimonials Section */}
             <section className="relative py-32 px-4 z-10">
+                <div className="pointer-events-none absolute inset-0">
+                    <div className="absolute inset-0 bg-[radial-gradient(ellipse_820px_460px_at_50%_-80px,rgba(88,28,235,0.18),transparent_72%)]" />
+                    <div className="absolute inset-0 bg-[radial-gradient(ellipse_420px_320px_at_95%_40%,rgba(29,78,216,0.08),transparent_62%)]" />
+                </div>
                 <div className="max-w-7xl mx-auto">
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
@@ -369,9 +687,76 @@ const HomePage = () => {
                         </p>
                     </motion.div>
 
-                    <div className="grid md:grid-cols-3 gap-8">
-                        {testimonials.map((testimonial, index) => (
-                            <TestimonialCard key={index} {...testimonial} delay={index * 0.1} />
+                    <div className="columns-1 md:columns-2 xl:columns-3 gap-4 [column-fill:_balance]">
+                        {tweetWall.map((tweet, index) => (
+                            <motion.article
+                                key={tweet.handle}
+                                initial={{ opacity: 0, y: 22 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                                transition={{ duration: 0.5, delay: index * 0.05 }}
+                                className={`mb-4 rounded-2xl border border-white/10 bg-black/50 backdrop-blur-xl p-5 transition-all duration-300 hover:-translate-y-0.5 ${tweet.glow} [break-inside:avoid]`}
+                            >
+                                <div className="flex items-center justify-between mb-4">
+                                    <div className="flex items-center gap-3">
+                                        <div className={`w-10 h-10 rounded-full bg-gradient-to-br ${tweet.avatarClass} grid place-items-center text-xs font-extrabold`}>
+                                            {tweet.avatar}
+                                        </div>
+                                        <div>
+                                            <p className="text-sm font-bold text-slate-100 flex items-center gap-1.5">
+                                                {tweet.name}
+                                                {tweet.verified && (
+                                                    <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-sky-500">
+                                                        <BadgeCheck className="w-3 h-3 text-white" />
+                                                    </span>
+                                                )}
+                                            </p>
+                                            <p className="text-xs text-slate-500">{tweet.handle}</p>
+                                        </div>
+                                    </div>
+                                    <span className="text-slate-600 text-sm font-semibold">X</span>
+                                </div>
+
+                                {tweet.chips?.length > 0 && (
+                                    <div className="flex flex-wrap gap-2 mb-3">
+                                        {tweet.chips.map((chip) => (
+                                            <span key={chip} className="px-2 py-0.5 rounded-md text-[10px] font-semibold tracking-wide uppercase bg-white/5 border border-white/10 text-slate-400">
+                                                {chip}
+                                            </span>
+                                        ))}
+                                    </div>
+                                )}
+
+                                <p className="text-[0.92rem] leading-7 text-slate-200 mb-3">{tweet.body}</p>
+
+                                {tweet.code && (
+                                    <pre className="mb-3 rounded-xl border border-white/10 bg-black/40 p-3 text-xs text-cyan-200 leading-6 overflow-x-auto font-mono">
+                                        {tweet.code.map((line) => <div key={line}>{line}</div>)}
+                                    </pre>
+                                )}
+
+                                {tweet.tag && (
+                                    <span className={`inline-block px-2.5 py-1 rounded-full text-[10px] font-semibold tracking-wider uppercase border mb-3 ${tweet.tagClass}`}>
+                                        {tweet.tag}
+                                    </span>
+                                )}
+
+                                <div className="pt-3 border-t border-white/10 flex items-center gap-4 text-slate-500 text-xs">
+                                    <span className="inline-flex items-center gap-1.5 hover:text-slate-200 transition-colors"><MessageCircle className="w-3.5 h-3.5" />{tweet.comments}</span>
+                                    <span className="inline-flex items-center gap-1.5 hover:text-slate-200 transition-colors"><Repeat2 className="w-3.5 h-3.5" />{tweet.reposts}</span>
+                                    <span className="inline-flex items-center gap-1.5 hover:text-slate-200 transition-colors"><Heart className="w-3.5 h-3.5" />{tweet.likes}</span>
+                                    <span className="ml-auto text-[10px] tracking-wide text-slate-600">{tweet.time}</span>
+                                </div>
+                            </motion.article>
+                        ))}
+                    </div>
+
+                    <div className="mt-14 grid grid-cols-2 md:grid-cols-4 gap-6">
+                        {communityStats.map((item) => (
+                            <div key={item.label} className="text-center">
+                                <p className="text-3xl md:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-br from-white to-blue-200 mb-2">{item.value}</p>
+                                <p className="text-[11px] uppercase tracking-[0.14em] text-slate-600">{item.label}</p>
+                            </div>
                         ))}
                     </div>
                 </div>
@@ -392,21 +777,60 @@ const HomePage = () => {
                         <div className="absolute inset-0 bg-grid-white opacity-[0.05]" />
 
                         <div className="relative z-10">
-                            <h2 className="text-5xl md:text-7xl font-black mb-8 text-white tracking-tight">
-                                Ready to Code Smarter?
+                            <span className="pointer-events-none absolute top-4 left-4 w-10 h-10 border-t border-l border-white/20 rounded-tl-md" />
+                            <span className="pointer-events-none absolute top-4 right-4 w-10 h-10 border-t border-r border-white/20 rounded-tr-md" />
+                            <span className="pointer-events-none absolute bottom-4 left-4 w-10 h-10 border-b border-l border-white/20 rounded-bl-md" />
+                            <span className="pointer-events-none absolute bottom-4 right-4 w-10 h-10 border-b border-r border-white/20 rounded-br-md" />
+
+                            <motion.div
+                                initial={{ opacity: 0, y: 20 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                                transition={{ duration: 0.6, delay: 0.1 }}
+                                className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-white/15 bg-white/5 mb-8"
+                            >
+                                <span className="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_10px_rgba(52,211,153,0.9)]" />
+                                <span className="text-[11px] tracking-[0.1em] uppercase text-slate-300 font-medium">
+                                    system.status - all engines running
+                                </span>
+                            </motion.div>
+
+                            <h2 className="text-5xl md:text-7xl font-black mb-7 text-white tracking-tight leading-[1.05]">
+                                Ready to Code<br />
+                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-200 via-indigo-200 to-purple-200">
+                                    Smarter?
+                                </span>
                             </h2>
-                            <p className="text-xl text-slate-300 mb-12 max-w-2xl mx-auto font-light">
+                            <p className="text-base md:text-lg text-slate-300/85 mb-11 max-w-xl mx-auto font-light leading-relaxed">
                                 Join thousands of developers using CodeSherpa to ship better code, faster.
                             </p>
-                            <button
-                                onClick={() => navigate('/chat')}
-                                className="group relative px-10 py-5 rounded-full font-bold text-lg text-white bg-white/10 border border-white/20 backdrop-blur-md overflow-hidden transition-all duration-300 hover:scale-105 hover:bg-white/20 hover:shadow-[0_0_50px_-10px_rgba(255,255,255,0.3)]"
-                            >
-                                <span className="relative z-10 flex items-center gap-3">
-                                    Get Started Free
-                                    <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                                </span>
-                            </button>
+
+                            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                                <button
+                                    onClick={() => navigate('/chat')}
+                                    className="group relative px-8 py-4 rounded-xl font-bold text-base text-white bg-white/10 border border-white/20 backdrop-blur-md overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:bg-white/20 hover:shadow-[0_0_40px_-10px_rgba(255,255,255,0.35)]"
+                                >
+                                    <span className="relative z-10 flex items-center gap-3">
+                                        Get Started Free
+                                        <span className="w-6 h-6 rounded-full bg-white/20 grid place-items-center text-sm group-hover:translate-x-0.5 transition-transform">→</span>
+                                    </span>
+                                </button>
+
+                                <button
+                                    onClick={() => navigate('/features')}
+                                    className="px-7 py-4 rounded-xl font-medium text-sm tracking-wide text-slate-300 border border-white/15 bg-transparent hover:bg-white/5 hover:text-white transition-all"
+                                >
+                                    ▶ Watch Demo
+                                </button>
+                            </div>
+
+                            <div className="mt-9 flex flex-wrap items-center justify-center gap-3 text-[11px] tracking-[0.08em] uppercase text-slate-500">
+                                <span>No credit card required</span>
+                                <span className="w-px h-3 bg-white/10" />
+                                <span>Free forever plan</span>
+                                <span className="w-px h-3 bg-white/10" />
+                                <span>Cancel anytime</span>
+                            </div>
                         </div>
                     </motion.div>
                 </div>
@@ -418,3 +842,4 @@ const HomePage = () => {
 }
 
 export default HomePage
+
