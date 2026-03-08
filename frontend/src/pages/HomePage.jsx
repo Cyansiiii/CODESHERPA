@@ -89,7 +89,7 @@ const HomePage = () => {
     const workflowSteps = [
         {
             num: "01",
-            icon: "ðŸ“‹",
+            icon: "📝",
             label: "Input",
             labelColor: "text-blue-300",
             title: "Paste Code",
@@ -105,7 +105,7 @@ const HomePage = () => {
         },
         {
             num: "02",
-            icon: "ðŸ¤–",
+            icon: "🧠",
             label: "Orchestrator",
             labelColor: "text-purple-300",
             title: "AI Analysis",
@@ -121,7 +121,7 @@ const HomePage = () => {
         },
         {
             num: "03",
-            icon: "ðŸ›",
+            icon: "🔎",
             label: "Review Monk",
             labelColor: "text-orange-300",
             title: "Bug Detection",
@@ -137,7 +137,7 @@ const HomePage = () => {
         },
         {
             num: "04",
-            icon: "ðŸ›¡ï¸",
+            icon: "🔐",
             label: "Security Guard",
             labelColor: "text-green-300",
             title: "Security Check",
@@ -153,7 +153,7 @@ const HomePage = () => {
         },
         {
             num: "05",
-            icon: "âœ…",
+            icon: "📤",
             label: "Output",
             labelColor: "text-cyan-300",
             title: "Optimized Code",
@@ -437,7 +437,7 @@ const HomePage = () => {
                                     </div>
 
                                     <div className="rounded-xl border border-amber-300/20 bg-amber-500/10 p-4">
-                                        <p className="text-sm font-semibold text-amber-200 mb-3">âš  CODESHERPA detected 2 issues:</p>
+                                        <p className="text-sm font-semibold text-amber-200 mb-3">⚠ CODESHERPA detected 2 issues:</p>
                                         <div className="space-y-2.5 text-sm leading-relaxed">
                                             <p className="text-slate-200">1. <span className="text-rose-300 font-medium">SQL Injection vulnerability (HIGH)</span></p>
                                             <p className="text-slate-300">Use parameterized queries instead</p>
@@ -636,7 +636,7 @@ const HomePage = () => {
                                     { n: "~40s", l: "Full Pipeline" },
                                     { n: "5", l: "AI Agents" },
                                     { n: "50K+", l: "PRs Reviewed" },
-                                    { n: "â‚¹2Cr+", l: "Dev Time Saved" }
+                                    { n: "₹2Cr+", l: "Dev Time Saved" }
                                 ].map((item) => (
                                     <div key={item.l} className="text-center">
                                         <p className="text-2xl md:text-3xl font-black text-transparent bg-clip-text bg-gradient-to-br from-white to-blue-200">{item.n}</p>
@@ -649,7 +649,7 @@ const HomePage = () => {
                                 onClick={() => navigate('/chat')}
                                 className="px-7 py-3 rounded-xl bg-gradient-to-r from-blue-500 to-violet-600 text-white font-semibold shadow-[0_0_30px_rgba(59,130,246,0.35)] hover:-translate-y-0.5 transition-all"
                             >
-                                Try Live Demo â†’
+                                Try Live Demo →
                             </button>
                         </div>
                     </div>
@@ -872,7 +872,7 @@ const HomePage = () => {
                                 >
                                     <span className="relative z-10 flex items-center gap-3">
                                         Get Started Free
-                                        <span className="w-6 h-6 rounded-full bg-white/20 grid place-items-center text-sm group-hover:translate-x-0.5 transition-transform">â†’</span>
+                                        <span className="w-6 h-6 rounded-full bg-white/20 grid place-items-center text-sm group-hover:translate-x-0.5 transition-transform">→</span>
                                     </span>
                                 </button>
 
@@ -880,7 +880,7 @@ const HomePage = () => {
                                     onClick={() => navigate('/features')}
                                     className="px-7 py-4 rounded-xl font-medium text-sm tracking-wide text-slate-300 border border-white/15 bg-transparent hover:bg-white/5 hover:text-white transition-all"
                                 >
-                                    â–¶ Watch Demo
+                                    ▶ Watch Demo
                                 </button>
                             </div>
 
