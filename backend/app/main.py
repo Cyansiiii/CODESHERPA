@@ -3,6 +3,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
 from app.agents.orchestrator import OrchestratorAgent
 from app.api.endpoints import github, whatsapp
+from pydantic import BaseModel
+from app.services.aws_services import aws_services
 import logging
 
 import json
@@ -86,7 +88,51 @@ app.include_router(whatsapp.router, prefix="/api/whatsapp", tags=["whatsapp"])
 
 @app.get("/health")
 def health_check():
-    return {"status": "ok", "service": "CodeSherpa Backend"}
+    from app.services.bedrock_service import bedrock_client
+    return {
+        "status": "ok", 
+        "service": "CodeSherpa Backend",
+        "active_model": bedrock_client.current_provider,
+        "available_models": list(bedrock_client.get_available_models().keys())
+    }
+
+@app.get("/api/aws-status")
+def aws_status():
+    return {
+        "aws_infrastructure": aws_services.get_status(),
+        "active_llm": orchestrator.review_monk.bedrock.current_provider,
+        "available_models": orchestrator.review_monk.bedrock.get_available_models(),
+        "message": "CodeSherpa runs on AWS infrastructure"
+    }
+
+@app.get("/api/models")
+def get_models():
+    return {
+        "active": orchestrator.review_monk.bedrock.current_provider,
+        "available": orchestrator.review_monk.bedrock.get_available_models()
+    }
+
+@app.post("/api/models/switch")
+def switch_model(payload: dict):
+    provider = payload.get("provider")
+    success = orchestrator.review_monk.bedrock.set_provider(provider)
+    orchestrator.codebase_sherpa.bedrock.set_provider(provider)
+    orchestrator.bedrock.set_provider(provider)
+    if success:
+        return {"status": "switched", "active": provider}
+    return {"status": "error", "message": f"Provider not available",
+            "available": orchestrator.review_monk.bedrock.get_available_models()}
+
+@app.post("/api/models/key")
+def update_provider_key(payload: dict):
+    provider = payload.get("provider")
+    key = payload.get("key")
+    if provider and key:
+        orchestrator.review_monk.bedrock.update_api_key(provider, key)
+        orchestrator.codebase_sherpa.bedrock.update_api_key(provider, key)
+        orchestrator.bedrock.update_api_key(provider, key)
+        return {"status": "success", "message": f"Updated key for {provider}"}
+    return {"status": "error", "message": "Provider and key required"}
 
 @app.post("/api/chat")
 async def chat_endpoint(payload: dict):

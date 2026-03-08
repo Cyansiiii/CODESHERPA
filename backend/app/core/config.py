@@ -9,6 +9,13 @@ class Settings(BaseSettings):
     AWS_ACCESS_KEY_ID: str | None = None
     AWS_SECRET_ACCESS_KEY: str | None = None
     
+    # Multimodel APIs
+    GEMINI_API_KEY: str | None = None
+    ANTHROPIC_API_KEY: str | None = None
+    OPENAI_API_KEY: str | None = None
+    DEEPSEEK_API_KEY: str | None = None
+    GROQ_API_KEY: str | None = None
+    
     # GitHub
     GITHUB_TOKEN: str | None = None
     GITHUB_WEBHOOK_SECRET: str | None = None

@@ -35,9 +35,21 @@ class OrchestratorAgent(BaseAgent):
             if "hindi" in user_message.lower() or "namaste" in user_message.lower():
                 return DEMO_HINDI_EXPLANATION
         
+        # 1. Smart code detection — route directly without classification
+        code_indicators = ["<!doctype", "<html", "def ", "function ", "import ", "class ", "const ", "var "]
+        if any(indicator in user_message.lower() for indicator in code_indicators) and len(user_message) > 100:
+            return await self.codebase_sherpa.process(
+                {
+                    "action": "explain",
+                    "code_snippet": user_message,
+                    "target_language": "English",
+                    "message": user_message
+                },
+                session_id
+            )
+
         # 1. Intent Classification
-        classification_prompt = f"User Message: '{user_message}'\n\nClassify the intent and choose the best agent."
-        
+        classification_prompt = f"User Message: '{user_message[:500]}'\n\nClassify the intent and choose the best agent."        
         response_text = await self.call_claude(classification_prompt, self.system_prompt, temperature=0.1)
         
         try:
@@ -59,7 +71,7 @@ class OrchestratorAgent(BaseAgent):
                     {
                         "action": "explain", 
                         "code_snippet": input_data.get("code_context", user_message),
-                        "target_language": "English" # Default to English, can extract from message later
+                        "target_language": input_data.get("target_language", "English")
                     },
                     session_id
                 )

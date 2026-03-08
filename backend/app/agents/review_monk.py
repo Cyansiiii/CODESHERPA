@@ -1,5 +1,6 @@
 from app.agents.base_agent import BaseAgent
 import json
+import re
 
 class ReviewMonkAgent(BaseAgent):
     def __init__(self):
@@ -36,16 +37,11 @@ class ReviewMonkAgent(BaseAgent):
         """
 
     async def process(self, input_data: dict, session_id: str) -> dict:
-        """
-        Input data expects:
-        {
-            "diff": "git diff string...",
-            "pr_title": "PR Title",
-            "language": "python" | "javascript" | ...
-        }
-        """
         diff = input_data.get("diff", "")
         pr_title = input_data.get("pr_title", "Unknown PR")
+        
+        # 1. Save to memory BEFORE AI call
+        await self.save_to_memory(session_id, "user", f"PR Review: {pr_title}")
         
         if not diff:
             return {"error": "No diff provided"}
@@ -65,22 +61,43 @@ class ReviewMonkAgent(BaseAgent):
         response_text = await self.call_claude(
             prompt=prompt,
             system_prompt=self.system_prompt,
-            temperature=0.2 # Lower temperature for analytical tasks
+            temperature=0.2,
+            provider="groq"
         )
         
-        # Parse JSON from response (handling potential markdown code blocks)
         try:
-            clean_text = response_text.replace("```json", "").replace("```", "").strip()
-            review_data = json.loads(clean_text)
+            clean = re.sub(r"```json\s*", "", response_text)
+            clean = re.sub(r"```\s*", "", clean).strip()
+            try:
+                review_data = json.loads(clean)
+            except json.JSONDecodeError:
+                match = re.search(r"\{[\s\S]*\}", clean)
+                if match:
+                    review_data = json.loads(match.group())
+                else:
+                    review_data = {
+                        "summary": clean[:300],
+                        "findings": [],
+                        "quality_score": 5,
+                        "security_risk": "Unknown"
+                    }
+        except Exception:
+            review_data = {
+                "error": "Failed to parse AI response",
+                "raw_response": response_text[:500]
+            }
             
-            # Save to memory
+        if "error" not in review_data:
+            # 2. Save to memory AFTER AI call
+            await self.save_to_memory(session_id, "assistant", json.dumps(review_data))
+            
+            # 3. Keep existing redis save_context for last_review
             await self.save_context(session_id, "last_review", review_data)
             
-            return review_data
-        except json.JSONDecodeError:
-            return {"error": "Failed to parse AI response", "raw_response": response_text}
+            # 4. Add aws_services_used dict to response
+            review_data["aws_services_used"] = {"dynamodb": self.aws.dynamodb.enabled}
+            
+        return review_data
 
     async def analyze_github_pr(self, repo_url: str, pr_number: int, github_service):
-        """Helper to integration with actual GitHub service later"""
-        # Placeholder for Phase 4
         pass

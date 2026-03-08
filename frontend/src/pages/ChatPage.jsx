@@ -52,6 +52,19 @@ const ChatPage = () => {
     const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false)
     const [attachedFile, setAttachedFile] = useState(null)
     const [fileError, setFileError] = useState('')
+    const [language, setLanguage] = useState('English')
+    const [models, setModels] = useState({ active: 'mock', available: {} })
+    const [notificationsEnabled, setNotificationsEnabled] = useState(true)
+    const [autoReviewEnabled, setAutoReviewEnabled] = useState(true)
+    const [apiKeyInput, setApiKeyInput] = useState('')
+
+    useEffect(() => {
+        fetch('http://localhost:8000/api/models')
+            .then(res => res.json())
+            .then(data => setModels(data))
+            .catch(err => console.error(err))
+    }, [])
+
     const ws = useRef(null)
     const messagesEndRef = useRef(null)
     const fileInputRef = useRef(null)
@@ -214,6 +227,7 @@ const ChatPage = () => {
             ws.current.send(JSON.stringify({
                 message: outgoingMessage,
                 session_id: 'demo-session-1',
+                target_language: language,
                 attachments: attachedFile
                     ? [{
                         name: attachedFile.name,
@@ -425,12 +439,22 @@ const ChatPage = () => {
         }
 
         if (selectedSection === 'Settings') {
-            const settings = [
-                { name: 'Realtime notifications', value: 'Enabled', action: 'Manage Alerts', icon: Bell },
-                { name: 'Auto code review', value: 'Enabled', action: 'Review Rules', icon: CheckCircle2 },
-                { name: 'Language preference', value: 'English + Hindi', action: 'Change Locale', icon: Globe2 },
-                { name: 'Model backend', value: 'AWS Bedrock Claude 3.5', action: 'Switch Model', icon: SlidersHorizontal }
-            ]
+            const handleModelSwitch = async (e) => {
+                const provider = e.target.value;
+                try {
+                    const res = await fetch('http://localhost:8000/api/models/switch', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ provider })
+                    });
+                    if (res.ok) {
+                        const data = await res.json();
+                        setModels(prev => ({ ...prev, active: data.active }));
+                    }
+                } catch (error) {
+                    console.error("Failed to switch model");
+                }
+            };
 
             return (
                 <motion.div variants={panelContainerVariants} initial="hidden" animate="show" className="space-y-4">
@@ -440,26 +464,119 @@ const ChatPage = () => {
                     </motion.div>
 
                     <motion.div variants={panelItemVariants} className="grid gap-3 md:grid-cols-2">
-                        {settings.map((item) => (
-                            <motion.div key={item.name} whileHover={panelCardHover} className="glass-hover-card rounded-2xl border border-white/10 bg-slate-900/60 p-4">
-                                <div className="flex items-center justify-between">
-                                    <div className="flex items-center gap-2">
-                                        <item.icon className="h-4 w-4 text-cyan-300" />
-                                        <p className="text-sm text-slate-300">{item.name}</p>
-                                    </div>
-                                    <motion.button whileHover={secondaryButtonHover} whileTap={{ scale: 0.98 }} className="rounded-lg border border-white/15 px-2 py-1 text-[11px] text-slate-200 hover:bg-white/10">
-                                        {item.action}
-                                    </motion.button>
+                        {/* Notifications */}
+                        <motion.div whileHover={panelCardHover} className="glass-hover-card rounded-2xl border border-white/10 bg-slate-900/60 p-4 flex flex-col justify-between">
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-2">
+                                    <Bell className="h-4 w-4 text-cyan-300" />
+                                    <p className="text-sm text-slate-300">Realtime notifications</p>
                                 </div>
-                                <p className="mt-2 text-base font-medium text-white">{item.value}</p>
-                            </motion.div>
-                        ))}
+                                <motion.button onClick={() => setNotificationsEnabled(!notificationsEnabled)} whileHover={secondaryButtonHover} whileTap={{ scale: 0.98 }} className="rounded-lg border border-white/15 px-2 py-1 text-[11px] text-slate-200 hover:bg-white/10">
+                                    {notificationsEnabled ? 'Disable' : 'Enable'}
+                                </motion.button>
+                            </div>
+                            <p className="mt-2 text-base font-medium text-white">{notificationsEnabled ? 'Enabled' : 'Disabled'}</p>
+                        </motion.div>
+
+                        {/* Auto Code Review */}
+                        <motion.div whileHover={panelCardHover} className="glass-hover-card rounded-2xl border border-white/10 bg-slate-900/60 p-4 flex flex-col justify-between">
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-2">
+                                    <CheckCircle2 className="h-4 w-4 text-cyan-300" />
+                                    <p className="text-sm text-slate-300">Auto code review</p>
+                                </div>
+                                <motion.button onClick={() => setAutoReviewEnabled(!autoReviewEnabled)} whileHover={secondaryButtonHover} whileTap={{ scale: 0.98 }} className="rounded-lg border border-white/15 px-2 py-1 text-[11px] text-slate-200 hover:bg-white/10">
+                                    {autoReviewEnabled ? 'Disable' : 'Enable'}
+                                </motion.button>
+                            </div>
+                            <p className="mt-2 text-base font-medium text-white">{autoReviewEnabled ? 'Enabled' : 'Disabled'}</p>
+                        </motion.div>
+
+                        {/* Language Preference */}
+                        <motion.div whileHover={panelCardHover} className="glass-hover-card rounded-2xl border border-white/10 bg-slate-900/60 p-4">
+                            <div className="flex items-center mb-2 gap-2">
+                                <Globe2 className="h-4 w-4 text-cyan-300" />
+                                <p className="text-sm text-slate-300">Language preference</p>
+                            </div>
+                            <select
+                                value={language}
+                                onChange={(e) => setLanguage(e.target.value)}
+                                className="w-full mt-1 rounded-lg border border-white/10 bg-slate-800 px-3 py-2 text-sm text-white focus:border-cyan-500/50 focus:outline-none"
+                            >
+                                <option value="English">English</option>
+                                <option value="Hindi">Hindi</option>
+                                <option value="Bengali">Bengali</option>
+                                <option value="Tamil">Tamil</option>
+                                <option value="Hinglish">Hinglish</option>
+                            </select>
+                        </motion.div>
+
+                        {/* Model Backend */}
+                        <motion.div whileHover={panelCardHover} className="glass-hover-card rounded-2xl border border-white/10 bg-slate-900/60 p-4">
+                            <div className="flex items-center mb-2 gap-2">
+                                <SlidersHorizontal className="h-4 w-4 text-cyan-300" />
+                                <p className="text-sm text-slate-300">Model backend</p>
+                            </div>
+                            <select
+                                value={models.active || 'mock'}
+                                onChange={handleModelSwitch}
+                                className="w-full mt-1 rounded-lg border border-white/10 bg-slate-800 px-3 py-2 text-sm text-white focus:border-cyan-500/50 focus:outline-none"
+                            >
+                                {Object.keys(models.available || {}).length > 0 ? (
+                                    Object.keys(models.available).map(key => (
+                                        <option key={key} value={key}>{models.available[key]}</option>
+                                    ))
+                                ) : (
+                                    <option value="mock">Demo Mode (Mock)</option>
+                                )}
+                            </select>
+                        </motion.div>
+
+                        {/* API keys config */}
+                        <motion.div whileHover={panelCardHover} className="glass-hover-card rounded-2xl border border-white/10 bg-slate-900/60 p-4 md:col-span-2">
+                            <div className="flex items-center gap-2 justify-between">
+                                <div className="flex items-center gap-2">
+                                    <ShieldAlert className="h-4 w-4 text-cyan-300" />
+                                    <p className="text-sm text-slate-300">Override API Provider Key</p>
+                                </div>
+                            </div>
+                            <div className="flex gap-2 mt-3">
+                                <input
+                                    type="password"
+                                    value={apiKeyInput}
+                                    onChange={(e) => setApiKeyInput(e.target.value)}
+                                    placeholder="Enter backend API Key to override defaults"
+                                    className="flex-1 rounded-lg border border-white/10 bg-slate-800 px-3 py-2 text-sm text-white placeholder:text-slate-500 focus:border-cyan-500/50 focus:outline-none"
+                                />
+                                <motion.button
+                                    onClick={() => {
+                                        if (!apiKeyInput) return;
+                                        fetch('http://localhost:8000/api/models/key', {
+                                            method: 'POST',
+                                            headers: { 'Content-Type': 'application/json' },
+                                            body: JSON.stringify({ provider: models.active, key: apiKeyInput })
+                                        })
+                                            .then(res => res.json())
+                                            .then(data => alert(data.status === 'success' ? 'API Key saved securely to active model backend.' : 'Failed to save API key.'));
+                                    }}
+                                    whileHover={secondaryButtonHover} whileTap={{ scale: 0.98 }}
+                                    className="rounded-lg bg-cyan-500 px-4 py-2 text-xs font-semibold text-slate-900 hover:bg-cyan-400"
+                                >
+                                    Save Key
+                                </motion.button>
+                            </div>
+                        </motion.div>
                     </motion.div>
 
                     <motion.div variants={panelItemVariants} whileHover={panelCardHover} className="glass-hover-card rounded-2xl border border-white/10 bg-slate-900/60 p-4">
                         <div className="flex flex-wrap items-center justify-between gap-2">
                             <p className="text-sm text-slate-300">Run quick diagnostics for latency, websocket health, and agent sync.</p>
-                            <motion.button whileHover={actionButtonHover} whileTap={{ scale: 0.98 }} className="inline-flex items-center gap-2 rounded-lg bg-cyan-500 px-3 py-2 text-xs font-semibold text-slate-900 hover:bg-cyan-400">
+                            <motion.button onClick={() => {
+                                fetch('http://localhost:8000/api/aws-status')
+                                    .then(res => res.json())
+                                    .then(data => alert(JSON.stringify(data, null, 2)))
+                                    .catch(err => alert('Backend offline'));
+                            }} whileHover={actionButtonHover} whileTap={{ scale: 0.98 }} className="inline-flex items-center gap-2 rounded-lg bg-cyan-500 px-3 py-2 text-xs font-semibold text-slate-900 hover:bg-cyan-400">
                                 <PlayCircle className="h-4 w-4" />
                                 Run Diagnostics
                             </motion.button>
@@ -618,191 +735,191 @@ const ChatPage = () => {
                 <div className="mx-auto w-full max-w-6xl">
                     <AnimatePresence mode="wait">
                         {selectedSection === 'Chat' ? (
-                        <motion.div
-                            key="chat-panel"
-                            initial={{ opacity: 0, y: 18, scale: 0.99 }}
-                            animate={{ opacity: 1, y: 0, scale: 1 }}
-                            exit={{ opacity: 0, y: -12, scale: 0.99 }}
-                            transition={{ duration: 0.28, ease: 'easeOut' }}
-                            className="overflow-hidden rounded-3xl border border-white/10 bg-slate-950/40 backdrop-blur-md shadow-[0_20px_80px_rgba(0,0,0,0.35)]"
-                        >
-                            <div className="h-[calc(100vh-260px)] min-h-[360px] max-h-[660px] overflow-y-auto p-4 sm:p-6">
-                                <AnimatePresence>
-                                    {messages.map((msg, index) => (
+                            <motion.div
+                                key="chat-panel"
+                                initial={{ opacity: 0, y: 18, scale: 0.99 }}
+                                animate={{ opacity: 1, y: 0, scale: 1 }}
+                                exit={{ opacity: 0, y: -12, scale: 0.99 }}
+                                transition={{ duration: 0.28, ease: 'easeOut' }}
+                                className="overflow-hidden rounded-3xl border border-white/10 bg-slate-950/40 backdrop-blur-md shadow-[0_20px_80px_rgba(0,0,0,0.35)]"
+                            >
+                                <div className="h-[calc(100vh-260px)] min-h-[360px] max-h-[660px] overflow-y-auto p-4 sm:p-6">
+                                    <AnimatePresence>
+                                        {messages.map((msg, index) => (
+                                            <motion.div
+                                                key={msg.id}
+                                                initial={{ opacity: 0, y: 20 }}
+                                                animate={{ opacity: 1, y: 0 }}
+                                                exit={{ opacity: 0, y: -20 }}
+                                                transition={{ duration: 0.25, delay: index * 0.02 }}
+                                                className={`mb-6 flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+                                            >
+                                                <div className={`max-w-[88%] sm:max-w-[80%] ${msg.sender === 'user' ? 'order-2' : 'order-1'}`}>
+                                                    <motion.div
+                                                        whileHover={{ y: -1, scale: 1.003, boxShadow: msg.sender === 'user' ? '0 10px 20px rgba(6,182,212,0.18)' : '0 10px 20px rgba(59,130,246,0.12)' }}
+                                                        transition={{ type: 'spring', stiffness: 280, damping: 22 }}
+                                                        className={`rounded-2xl p-4 ${msg.sender === 'user'
+                                                            ? 'bg-cyan-500/90 text-slate-950'
+                                                            : 'border border-white/10 bg-slate-900/70'
+                                                            }`}>
+                                                        <div className={`prose max-w-none ${msg.sender === 'user' ? 'prose-slate' : 'prose-invert'}`}>
+                                                            <ReactMarkdown
+                                                                components={{
+                                                                    code({ inline, className, children, ...props }) {
+                                                                        const match = /language-(\w+)/.exec(className || '')
+                                                                        return !inline && match ? (
+                                                                            <div className="group relative">
+                                                                                <SyntaxHighlighter
+                                                                                    {...props}
+                                                                                    style={vscDarkPlus}
+                                                                                    language={match[1]}
+                                                                                    PreTag="div"
+                                                                                    className="rounded-lg !bg-slate-900"
+                                                                                >
+                                                                                    {String(children).replace(/\n$/, '')}
+                                                                                </SyntaxHighlighter>
+                                                                                <button
+                                                                                    onClick={() => copyToClipboard(String(children), msg.id)}
+                                                                                    className="absolute right-2 top-2 rounded-lg bg-slate-800 p-2 opacity-0 transition-opacity group-hover:opacity-100"
+                                                                                >
+                                                                                    {copiedId === msg.id ? (
+                                                                                        <Check className="h-4 w-4 text-emerald-400" />
+                                                                                    ) : (
+                                                                                        <Copy className="h-4 w-4 text-white" />
+                                                                                    )}
+                                                                                </button>
+                                                                            </div>
+                                                                        ) : (
+                                                                            <code {...props} className="rounded bg-slate-800 px-1 py-0.5 text-sm">
+                                                                                {children}
+                                                                            </code>
+                                                                        )
+                                                                    }
+                                                                }}
+                                                            >
+                                                                {msg.text}
+                                                            </ReactMarkdown>
+                                                        </div>
+                                                        <div className={`mt-2 text-right text-xs ${msg.sender === 'user' ? 'text-slate-800/70' : 'text-slate-400'}`}>
+                                                            {msg.timestamp}
+                                                        </div>
+                                                    </motion.div>
+                                                </div>
+                                            </motion.div>
+                                        ))}
+                                    </AnimatePresence>
+
+                                    {isTyping && (
                                         <motion.div
-                                            key={msg.id}
                                             initial={{ opacity: 0, y: 20 }}
                                             animate={{ opacity: 1, y: 0 }}
-                                            exit={{ opacity: 0, y: -20 }}
-                                            transition={{ duration: 0.25, delay: index * 0.02 }}
-                                            className={`mb-6 flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+                                            className="mb-6 flex justify-start"
                                         >
-                                            <div className={`max-w-[88%] sm:max-w-[80%] ${msg.sender === 'user' ? 'order-2' : 'order-1'}`}>
-                                                <motion.div
-                                                    whileHover={{ y: -1, scale: 1.003, boxShadow: msg.sender === 'user' ? '0 10px 20px rgba(6,182,212,0.18)' : '0 10px 20px rgba(59,130,246,0.12)' }}
-                                                    transition={{ type: 'spring', stiffness: 280, damping: 22 }}
-                                                    className={`rounded-2xl p-4 ${msg.sender === 'user'
-                                                    ? 'bg-cyan-500/90 text-slate-950'
-                                                    : 'border border-white/10 bg-slate-900/70'
-                                                    }`}>
-                                                    <div className={`prose max-w-none ${msg.sender === 'user' ? 'prose-slate' : 'prose-invert'}`}>
-                                                        <ReactMarkdown
-                                                            components={{
-                                                                code({ inline, className, children, ...props }) {
-                                                                    const match = /language-(\w+)/.exec(className || '')
-                                                                    return !inline && match ? (
-                                                                        <div className="group relative">
-                                                                            <SyntaxHighlighter
-                                                                                {...props}
-                                                                                style={vscDarkPlus}
-                                                                                language={match[1]}
-                                                                                PreTag="div"
-                                                                                className="rounded-lg !bg-slate-900"
-                                                                            >
-                                                                                {String(children).replace(/\n$/, '')}
-                                                                            </SyntaxHighlighter>
-                                                                            <button
-                                                                                onClick={() => copyToClipboard(String(children), msg.id)}
-                                                                                className="absolute right-2 top-2 rounded-lg bg-slate-800 p-2 opacity-0 transition-opacity group-hover:opacity-100"
-                                                                            >
-                                                                                {copiedId === msg.id ? (
-                                                                                    <Check className="h-4 w-4 text-emerald-400" />
-                                                                                ) : (
-                                                                                    <Copy className="h-4 w-4 text-white" />
-                                                                                )}
-                                                                            </button>
-                                                                        </div>
-                                                                    ) : (
-                                                                        <code {...props} className="rounded bg-slate-800 px-1 py-0.5 text-sm">
-                                                                            {children}
-                                                                        </code>
-                                                                    )
-                                                                }
-                                                            }}
-                                                        >
-                                                            {msg.text}
-                                                        </ReactMarkdown>
-                                                    </div>
-                                                    <div className={`mt-2 text-right text-xs ${msg.sender === 'user' ? 'text-slate-800/70' : 'text-slate-400'}`}>
-                                                        {msg.timestamp}
-                                                    </div>
-                                                </motion.div>
+                                            <div className="rounded-2xl border border-white/10 bg-slate-900/70 p-4">
+                                                <div className="flex gap-2">
+                                                    <motion.div
+                                                        animate={{ scale: [1, 1.2, 1] }}
+                                                        transition={{ duration: 0.6, repeat: Infinity, delay: 0 }}
+                                                        className="h-2 w-2 rounded-full bg-cyan-400"
+                                                    />
+                                                    <motion.div
+                                                        animate={{ scale: [1, 1.2, 1] }}
+                                                        transition={{ duration: 0.6, repeat: Infinity, delay: 0.2 }}
+                                                        className="h-2 w-2 rounded-full bg-blue-400"
+                                                    />
+                                                    <motion.div
+                                                        animate={{ scale: [1, 1.2, 1] }}
+                                                        transition={{ duration: 0.6, repeat: Infinity, delay: 0.4 }}
+                                                        className="h-2 w-2 rounded-full bg-indigo-400"
+                                                    />
+                                                </div>
                                             </div>
                                         </motion.div>
-                                    ))}
-                                </AnimatePresence>
+                                    )}
 
-                                {isTyping && (
-                                    <motion.div
-                                        initial={{ opacity: 0, y: 20 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        className="mb-6 flex justify-start"
-                                    >
-                                        <div className="rounded-2xl border border-white/10 bg-slate-900/70 p-4">
-                                            <div className="flex gap-2">
-                                                <motion.div
-                                                    animate={{ scale: [1, 1.2, 1] }}
-                                                    transition={{ duration: 0.6, repeat: Infinity, delay: 0 }}
-                                                    className="h-2 w-2 rounded-full bg-cyan-400"
-                                                />
-                                                <motion.div
-                                                    animate={{ scale: [1, 1.2, 1] }}
-                                                    transition={{ duration: 0.6, repeat: Infinity, delay: 0.2 }}
-                                                    className="h-2 w-2 rounded-full bg-blue-400"
-                                                />
-                                                <motion.div
-                                                    animate={{ scale: [1, 1.2, 1] }}
-                                                    transition={{ duration: 0.6, repeat: Infinity, delay: 0.4 }}
-                                                    className="h-2 w-2 rounded-full bg-indigo-400"
-                                                />
-                                            </div>
-                                        </div>
-                                    </motion.div>
-                                )}
+                                    <div ref={messagesEndRef} />
+                                </div>
 
-                                <div ref={messagesEndRef} />
-                            </div>
-
-                            <div className="border-t border-white/10 bg-slate-900/70 p-3 sm:p-4">
-                                <input
-                                    ref={fileInputRef}
-                                    type="file"
-                                    onChange={handleFileChange}
-                                    className="hidden"
-                                />
-                                <div className="flex gap-2 sm:gap-3">
-                                    <motion.button
-                                        whileHover={secondaryButtonHover}
-                                        whileTap={{ scale: 0.96 }}
-                                        onClick={handleAttachClick}
-                                        className="rounded-xl border border-white/15 px-3 py-3 text-slate-200 hover:bg-white/10"
-                                        title="Attach file"
-                                    >
-                                        <Paperclip className="h-5 w-5" />
-                                    </motion.button>
+                                <div className="border-t border-white/10 bg-slate-900/70 p-3 sm:p-4">
                                     <input
-                                        type="text"
-                                        value={input}
-                                        onChange={(e) => setInput(e.target.value)}
-                                        onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
-                                        placeholder="Type your message..."
-                                        disabled={!isConnected}
-                                        className="flex-1 rounded-xl border border-white/10 bg-slate-900/80 px-4 py-3 text-sm text-white placeholder:text-slate-500 focus:border-cyan-500/50 focus:outline-none disabled:opacity-50"
+                                        ref={fileInputRef}
+                                        type="file"
+                                        onChange={handleFileChange}
+                                        className="hidden"
                                     />
-                                    <motion.button
-                                        whileHover={actionButtonHover}
-                                        whileTap={{ scale: 0.96 }}
-                                        onClick={sendMessage}
-                                        disabled={(!input.trim() && !attachedFile) || !isConnected}
-                                        className="flex items-center gap-2 rounded-xl bg-cyan-500 px-4 py-3 font-semibold text-slate-900 transition hover:bg-cyan-400 disabled:cursor-not-allowed disabled:opacity-50"
-                                    >
-                                        {isTyping ? (
-                                            <Loader2 className="h-5 w-5 animate-spin" />
-                                        ) : (
-                                            <Send className="h-5 w-5" />
-                                        )}
-                                    </motion.button>
-                                </div>
-                                {(attachedFile || fileError) && (
-                                    <div className="mt-2">
-                                        {attachedFile && (
-                                            <div className="inline-flex items-center gap-2 rounded-lg border border-white/15 bg-slate-900/60 px-3 py-1.5 text-xs text-slate-300">
-                                                <FileText className="h-3.5 w-3.5 text-cyan-300" />
-                                                <span className="max-w-[240px] truncate">{attachedFile.name}</span>
-                                                <button
-                                                    onClick={() => setAttachedFile(null)}
-                                                    className="text-slate-400 hover:text-white"
-                                                >
-                                                    <X className="h-3.5 w-3.5" />
-                                                </button>
-                                            </div>
-                                        )}
-                                        {fileError && (
-                                            <p className="mt-1 text-xs text-rose-300">{fileError}</p>
-                                        )}
+                                    <div className="flex gap-2 sm:gap-3">
+                                        <motion.button
+                                            whileHover={secondaryButtonHover}
+                                            whileTap={{ scale: 0.96 }}
+                                            onClick={handleAttachClick}
+                                            className="rounded-xl border border-white/15 px-3 py-3 text-slate-200 hover:bg-white/10"
+                                            title="Attach file"
+                                        >
+                                            <Paperclip className="h-5 w-5" />
+                                        </motion.button>
+                                        <input
+                                            type="text"
+                                            value={input}
+                                            onChange={(e) => setInput(e.target.value)}
+                                            onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
+                                            placeholder="Type your message..."
+                                            disabled={!isConnected}
+                                            className="flex-1 rounded-xl border border-white/10 bg-slate-900/80 px-4 py-3 text-sm text-white placeholder:text-slate-500 focus:border-cyan-500/50 focus:outline-none disabled:opacity-50"
+                                        />
+                                        <motion.button
+                                            whileHover={actionButtonHover}
+                                            whileTap={{ scale: 0.96 }}
+                                            onClick={sendMessage}
+                                            disabled={(!input.trim() && !attachedFile) || !isConnected}
+                                            className="flex items-center gap-2 rounded-xl bg-cyan-500 px-4 py-3 font-semibold text-slate-900 transition hover:bg-cyan-400 disabled:cursor-not-allowed disabled:opacity-50"
+                                        >
+                                            {isTyping ? (
+                                                <Loader2 className="h-5 w-5 animate-spin" />
+                                            ) : (
+                                                <Send className="h-5 w-5" />
+                                            )}
+                                        </motion.button>
                                     </div>
-                                )}
-                                <div className="mt-2 text-center text-[11px] text-slate-400">
-                                    Backend: AWS Bedrock | Model: Claude 3.5
+                                    {(attachedFile || fileError) && (
+                                        <div className="mt-2">
+                                            {attachedFile && (
+                                                <div className="inline-flex items-center gap-2 rounded-lg border border-white/15 bg-slate-900/60 px-3 py-1.5 text-xs text-slate-300">
+                                                    <FileText className="h-3.5 w-3.5 text-cyan-300" />
+                                                    <span className="max-w-[240px] truncate">{attachedFile.name}</span>
+                                                    <button
+                                                        onClick={() => setAttachedFile(null)}
+                                                        className="text-slate-400 hover:text-white"
+                                                    >
+                                                        <X className="h-3.5 w-3.5" />
+                                                    </button>
+                                                </div>
+                                            )}
+                                            {fileError && (
+                                                <p className="mt-1 text-xs text-rose-300">{fileError}</p>
+                                            )}
+                                        </div>
+                                    )}
+                                    <div className="mt-2 text-center text-[11px] text-slate-400">
+                                        Backend: AWS Bedrock | Model: Claude 3.5
+                                    </div>
                                 </div>
-                            </div>
-                        </motion.div>
-                    ) : (
-                        <motion.div
-                            key={`${selectedSection}-panel`}
-                            initial={{ opacity: 0, y: 18, scale: 0.99 }}
-                            animate={{ opacity: 1, y: 0, scale: 1 }}
-                            exit={{ opacity: 0, y: -12, scale: 0.99 }}
-                            transition={{ duration: 0.28, ease: 'easeOut' }}
-                            className="glass-hover-card rounded-3xl border border-white/10 bg-slate-950/40 p-4 backdrop-blur-md sm:p-6"
-                        >
-                            <div className="glass-hover-card mb-4 rounded-2xl border border-white/10 bg-slate-900/50 px-4 py-3">
-                                <p className="text-xs uppercase tracking-[0.14em] text-cyan-300">{selectedSection}</p>
-                                <p className="mt-1 text-sm text-slate-300">{sectionDescription[selectedSection]}</p>
-                            </div>
-                            {renderSectionPanel()}
-                        </motion.div>
-                    )}
+                            </motion.div>
+                        ) : (
+                            <motion.div
+                                key={`${selectedSection}-panel`}
+                                initial={{ opacity: 0, y: 18, scale: 0.99 }}
+                                animate={{ opacity: 1, y: 0, scale: 1 }}
+                                exit={{ opacity: 0, y: -12, scale: 0.99 }}
+                                transition={{ duration: 0.28, ease: 'easeOut' }}
+                                className="glass-hover-card rounded-3xl border border-white/10 bg-slate-950/40 p-4 backdrop-blur-md sm:p-6"
+                            >
+                                <div className="glass-hover-card mb-4 rounded-2xl border border-white/10 bg-slate-900/50 px-4 py-3">
+                                    <p className="text-xs uppercase tracking-[0.14em] text-cyan-300">{selectedSection}</p>
+                                    <p className="mt-1 text-sm text-slate-300">{sectionDescription[selectedSection]}</p>
+                                </div>
+                                {renderSectionPanel()}
+                            </motion.div>
+                        )}
                     </AnimatePresence>
                 </div>
             </div>
