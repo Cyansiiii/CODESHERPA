@@ -1,10 +1,11 @@
 import React from 'react'
 import { motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
-import { ArrowLeft, Code2, Brain, Shield, Zap, Globe, MessageSquare, Github, TrendingUp, Users, Award, Rocket } from 'lucide-react'
+import { ArrowLeft, Shield, Github, TrendingUp, Award } from 'lucide-react'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import TextRoll from '../components/TextRoll'
+import PremiumGlassCard from '../components/PremiumGlassCard'
 import MultiAgentIcon from '../assets/images/multi-agent-architecture.svg'
 import SmartCodeReviewIcon from '../assets/images/smart-code-review.svg'
 import MultilingualIcon from '../assets/images/multilingual-support.svg'
@@ -147,7 +148,7 @@ const FeaturesPage = () => {
                         className="text-center mb-20"
                     >
                         <h1 className="text-6xl md:text-7xl font-black mb-6">
-                            <TextRoll center className="gradient-text-blue inline-block">
+                            <TextRoll center className="inline-block" textClassName="gradient-text-blue">
                                 Powerful Features
                             </TextRoll>
                         </h1>
@@ -167,21 +168,13 @@ const FeaturesPage = () => {
                                 transition={{ duration: 0.6, delay: index * 0.1 }}
                                 className="group relative"
                             >
-                                <div className="glass-dark rounded-3xl p-8 hover:bg-white/10 transition-all duration-300 h-full">
-                                    <div className={`inline-flex p-4 rounded-2xl bg-gradient-to-r ${feature.color} mb-6`}>
-                                        {feature.icon}
-                                    </div>
-                                    <h3 className="text-2xl font-bold mb-4">{feature.title}</h3>
-                                    <p className="text-gray-400 mb-6">{feature.description}</p>
-                                    <ul className="space-y-2">
-                                        {feature.details.map((detail, i) => (
-                                            <li key={i} className="flex items-start gap-2 text-sm text-gray-500">
-                                                <span className="text-blue-400 mt-1">•</span>
-                                                <span>{detail}</span>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </div>
+                                <PremiumGlassCard
+                                    icon={feature.icon}
+                                    title={feature.title}
+                                    description={feature.description}
+                                    details={feature.details}
+                                    color={feature.color}
+                                />
                             </motion.div>
                         ))}
                     </div>
@@ -196,7 +189,7 @@ const FeaturesPage = () => {
                         whileInView={{ opacity: 1, scale: 1 }}
                         viewport={{ once: true }}
                         transition={{ duration: 0.8 }}
-                        className="glass-dark rounded-3xl p-12 md:p-16"
+                        className="glass-dark glass-hover-card rounded-3xl p-12 md:p-16"
                     >
                         <h2 className="text-4xl md:text-5xl font-black mb-6">
                             Ready to Experience These Features?
@@ -220,3 +213,4 @@ const FeaturesPage = () => {
 }
 
 export default FeaturesPage
+

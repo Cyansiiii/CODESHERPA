@@ -28,6 +28,58 @@ app.add_middleware(
 # Initialize Orchestrator
 orchestrator = OrchestratorAgent()
 
+MAX_ATTACHMENT_CHARS = 12000
+MAX_ATTACHMENTS = 3
+
+
+def prepare_payload(payload: dict) -> dict:
+    """
+    Merge optional text attachments into code_context so existing agents
+    can review attached code/files without changing orchestrator contracts.
+    Expected attachment format:
+    {
+      "name": "file.py",
+      "content": "...text..."
+    }
+    """
+    normalized = dict(payload or {})
+    attachments = normalized.get("attachments") or []
+
+    if not isinstance(attachments, list) or not attachments:
+        return normalized
+
+    context_blocks: list[str] = []
+    for attachment in attachments[:MAX_ATTACHMENTS]:
+        if not isinstance(attachment, dict):
+            continue
+
+        name = str(attachment.get("name") or "attachment.txt")
+        content = str(attachment.get("content") or "").strip()
+        if not content:
+            continue
+
+        if len(content) > MAX_ATTACHMENT_CHARS:
+            content = (
+                content[:MAX_ATTACHMENT_CHARS]
+                + "\n\n...[truncated for length]..."
+            )
+
+        context_blocks.append(f"File: {name}\n{content}")
+
+    if context_blocks:
+        merged_context = "\n\n".join(context_blocks)
+        existing_context = str(normalized.get("code_context") or "").strip()
+        normalized["code_context"] = (
+            f"{existing_context}\n\n{merged_context}".strip()
+            if existing_context
+            else merged_context
+        )
+
+        if not str(normalized.get("message") or "").strip():
+            normalized["message"] = "Please review the attached file."
+
+    return normalized
+
 # Include Routers
 app.include_router(github.router, prefix="/api/github", tags=["github"])
 app.include_router(whatsapp.router, prefix="/api/whatsapp", tags=["whatsapp"])
@@ -43,8 +95,9 @@ async def chat_endpoint(payload: dict):
     Payload: {"message": "...", "session_id": "...", "code_context": "..."}
     """
     try:
-        session_id = payload.get("session_id", "default_session")
-        response = await orchestrator.process(payload, session_id)
+        normalized_payload = prepare_payload(payload)
+        session_id = normalized_payload.get("session_id", "default_session")
+        response = await orchestrator.process(normalized_payload, session_id)
         return response
     except Exception as e:
         logger.error(f"Chat error: {e}")
@@ -80,13 +133,14 @@ async def websocket_endpoint(websocket: WebSocket):
             # Expecting JSON string
             try:
                 payload = json.loads(data)
-                session_id = payload.get("session_id", "ws_session")
+                normalized_payload = prepare_payload(payload)
+                session_id = normalized_payload.get("session_id", "ws_session")
                 
                 # Send "Processing..." status
                 await manager.send_personal_message(json.dumps({"type": "status", "content": "thinking"}), websocket)
                 
                 # Process with Orchestrator
-                response = await orchestrator.process(payload, session_id)
+                response = await orchestrator.process(normalized_payload, session_id)
                 
                 # Send response
                 await manager.send_personal_message(json.dumps({"type": "response", "content": response}), websocket)

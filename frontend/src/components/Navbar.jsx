@@ -13,7 +13,7 @@ const Navbar = () => {
 
     useEffect(() => {
         const handleScroll = () => {
-            setIsScrolled(window.scrollY > 50)
+            setIsScrolled(window.scrollY > 120)
         }
         window.addEventListener('scroll', handleScroll)
         return () => window.removeEventListener('scroll', handleScroll)
@@ -29,7 +29,7 @@ const Navbar = () => {
         <motion.nav
             initial={{ y: -100 }}
             animate={{ y: 0 }}
-            className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? 'bg-[#030712]/85 backdrop-blur-xl' : 'bg-transparent'
+            className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? 'bg-slate-950/65 backdrop-blur-xl' : 'bg-transparent'
                 }`}
         >
             <div className="max-w-7xl mx-auto px-4 py-4">
@@ -41,7 +41,7 @@ const Navbar = () => {
                         <div className="w-10 h-10 flex items-center justify-center group-hover:scale-110 transition-transform">
                             <img src={Logo} alt="CodeSherpa Logo" className="w-8 h-8" />
                         </div>
-                        <TextRoll className="text-xl font-black gradient-text-white inline-block">
+                        <TextRoll className="text-xl font-black inline-block" textClassName="gradient-text-white">
                             CODESHERPA
                         </TextRoll>
                     </button>

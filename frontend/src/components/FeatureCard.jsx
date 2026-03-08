@@ -11,7 +11,7 @@ const FeatureCard = ({ icon, title, description, color, delay = 0 }) => {
             whileHover={{ y: -5 }}
             className="group relative"
         >
-            <div className="glass-dark rounded-3xl p-8 hover:bg-white/10 transition-all duration-300 h-full">
+            <div className="glass-hover-card rounded-3xl p-8 h-full">
                 <div className={`inline-flex p-4 rounded-2xl bg-gradient-to-r ${color} mb-6 group-hover:scale-110 transition-transform`}>
                     {icon}
                 </div>

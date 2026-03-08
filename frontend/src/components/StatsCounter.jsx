@@ -35,7 +35,7 @@ const StatsCounter = ({ value, suffix, label, icon, delay = 0 }) => {
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay }}
-            className="glass-dark rounded-3xl p-8 text-center hover:bg-white/10 transition-all duration-300"
+            className="glass-hover-card rounded-3xl p-8 text-center"
         >
             <div className="text-blue-400 mb-4 flex justify-center">
                 {React.cloneElement(icon, { className: 'w-8 h-8' })}

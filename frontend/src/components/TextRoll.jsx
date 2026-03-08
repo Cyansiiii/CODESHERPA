@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 
 const STAGGER = 0.035;
 
-const TextRoll = ({ children, className, center = false }) => {
+const TextRoll = ({ children, className, textClassName, center = false }) => {
     const text = typeof children === "string" ? children : String(children ?? "");
     const chars = text.split("");
     const springTransition = (delay) => ({
@@ -50,7 +50,7 @@ const TextRoll = ({ children, className, center = false }) => {
                                 hovered: { y: "-112%", rotateX: -70, opacity: 0.45 },
                             }}
                             transition={springTransition(delay)}
-                            className="inline-block will-change-transform"
+                            className={cn("inline-block will-change-transform", textClassName)}
                         >
                             {l === " " ? "\u00A0" : l}
                         </motion.span>
@@ -72,7 +72,7 @@ const TextRoll = ({ children, className, center = false }) => {
                                 hovered: { y: 0, rotateX: 0, opacity: 1 },
                             }}
                             transition={springTransition(delay)}
-                            className="inline-block will-change-transform"
+                            className={cn("inline-block will-change-transform", textClassName)}
                         >
                             {l === " " ? "\u00A0" : l}
                         </motion.span>

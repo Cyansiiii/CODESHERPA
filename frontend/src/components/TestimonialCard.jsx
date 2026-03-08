@@ -9,7 +9,7 @@ const TestimonialCard = ({ name, role, content, avatar, rating, delay = 0 }) => 
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay }}
-            className="glass-dark rounded-3xl p-8 hover:bg-white/10 transition-all duration-300"
+            className="glass-hover-card rounded-3xl p-8"
         >
             <div className="flex gap-1 mb-4">
                 {[...Array(rating)].map((_, i) => (

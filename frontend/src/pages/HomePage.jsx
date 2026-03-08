@@ -1,4 +1,4 @@
-import React from 'react'
+﻿import React, { useEffect, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 import {
@@ -15,11 +15,48 @@ import DarkVeil from '../components/DarkVeil'
 
 // ... existing imports
 
+const HoverStat = ({ label, baseValue, hoverValue, formatValue }) => {
+    const [displayValue, setDisplayValue] = useState(baseValue)
+    const frameRef = useRef(null)
+    const animateValue = (target) => {
+        if (frameRef.current) cancelAnimationFrame(frameRef.current)
+        const startValue = displayValue
+        const duration = 420
+        const startTime = performance.now()
+        const tick = (now) => {
+            const progress = Math.min((now - startTime) / duration, 1)
+            const eased = 1 - Math.pow(1 - progress, 3)
+            const next = startValue + (target - startValue) * eased
+            setDisplayValue(next)
+            if (progress < 1) frameRef.current = requestAnimationFrame(tick)
+        }
+        frameRef.current = requestAnimationFrame(tick)
+    }
+    useEffect(() => () => {
+        if (frameRef.current) cancelAnimationFrame(frameRef.current)
+    }, [])
+    return (
+        <motion.div
+            onMouseEnter={() => animateValue(hoverValue)}
+            onMouseLeave={() => animateValue(baseValue)}
+            whileHover={{ y: -3, scale: 1.02 }}
+            transition={{ type: 'spring', stiffness: 260, damping: 20 }}
+            className="text-center"
+        >
+            <p className="text-3xl md:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-br from-white to-blue-200 mb-2">
+                {formatValue(displayValue)}
+            </p>
+            <p className="text-[11px] uppercase tracking-[0.14em] text-slate-600">{label}</p>
+        </motion.div>
+    )
+}
+
 const HomePage = () => {
     const navigate = useNavigate()
     const workflowParticleDelays = [0, 0.25, 0.5, 0.75, 1, 1.2, 1.45, 1.7]
 
     const handleWorkflowMove = (e, glow) => {
+
         const card = e.currentTarget
         const rect = card.getBoundingClientRect()
         const cx = rect.left + rect.width / 2
@@ -52,7 +89,7 @@ const HomePage = () => {
     const workflowSteps = [
         {
             num: "01",
-            icon: "📋",
+            icon: "ðŸ“‹",
             label: "Input",
             labelColor: "text-blue-300",
             title: "Paste Code",
@@ -68,7 +105,7 @@ const HomePage = () => {
         },
         {
             num: "02",
-            icon: "🤖",
+            icon: "ðŸ¤–",
             label: "Orchestrator",
             labelColor: "text-purple-300",
             title: "AI Analysis",
@@ -84,7 +121,7 @@ const HomePage = () => {
         },
         {
             num: "03",
-            icon: "🐛",
+            icon: "ðŸ›",
             label: "Review Monk",
             labelColor: "text-orange-300",
             title: "Bug Detection",
@@ -100,7 +137,7 @@ const HomePage = () => {
         },
         {
             num: "04",
-            icon: "🛡️",
+            icon: "ðŸ›¡ï¸",
             label: "Security Guard",
             labelColor: "text-green-300",
             title: "Security Check",
@@ -116,7 +153,7 @@ const HomePage = () => {
         },
         {
             num: "05",
-            icon: "✅",
+            icon: "âœ…",
             label: "Output",
             labelColor: "text-cyan-300",
             title: "Optimized Code",
@@ -183,10 +220,30 @@ const HomePage = () => {
     ]
 
     const communityStats = [
-        { value: "5,000+", label: "Active Devs" },
-        { value: "4.9★", label: "Avg Rating" },
-        { value: "50K+", label: "PRs Reviewed" },
-        { value: "₹2Cr+", label: "Savings" }
+        {
+            label: "Active Devs",
+            baseValue: 5000,
+            hoverValue: 5600,
+            formatValue: (v) => Math.round(v).toLocaleString() + "+"
+        },
+        {
+            label: "Avg Rating",
+            baseValue: 4.9,
+            hoverValue: 5.0,
+            formatValue: (v) => v.toFixed(1) + "★"
+        },
+        {
+            label: "PRs Reviewed",
+            baseValue: 50000,
+            hoverValue: 58000,
+            formatValue: (v) => Math.round(v / 1000) + "K+"
+        },
+        {
+            label: "Savings",
+            baseValue: 2.0,
+            hoverValue: 2.4,
+            formatValue: (v) => "₹" + v.toFixed(1).replace(".0", "") + "Cr+"
+        }
     ]
 
     return (
@@ -380,7 +437,7 @@ const HomePage = () => {
                                     </div>
 
                                     <div className="rounded-xl border border-amber-300/20 bg-amber-500/10 p-4">
-                                        <p className="text-sm font-semibold text-amber-200 mb-3">⚠ CODESHERPA detected 2 issues:</p>
+                                        <p className="text-sm font-semibold text-amber-200 mb-3">âš  CODESHERPA detected 2 issues:</p>
                                         <div className="space-y-2.5 text-sm leading-relaxed">
                                             <p className="text-slate-200">1. <span className="text-rose-300 font-medium">SQL Injection vulnerability (HIGH)</span></p>
                                             <p className="text-slate-300">Use parameterized queries instead</p>
@@ -442,7 +499,7 @@ const HomePage = () => {
                 <div className="max-w-7xl mx-auto">
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                         {stats.map((stat, index) => (
-                            <div key={index} className="glass-card p-6 rounded-2xl text-center group">
+                            <div key={index} className="glass-card glass-hover-card p-6 rounded-2xl text-center group">
                                 <div className="mb-4 inline-flex p-3 rounded-lg bg-white/5 group-hover:scale-110 transition-transform duration-300">
                                     {stat.icon}
                                 </div>
@@ -579,7 +636,7 @@ const HomePage = () => {
                                     { n: "~40s", l: "Full Pipeline" },
                                     { n: "5", l: "AI Agents" },
                                     { n: "50K+", l: "PRs Reviewed" },
-                                    { n: "₹2Cr+", l: "Dev Time Saved" }
+                                    { n: "â‚¹2Cr+", l: "Dev Time Saved" }
                                 ].map((item) => (
                                     <div key={item.l} className="text-center">
                                         <p className="text-2xl md:text-3xl font-black text-transparent bg-clip-text bg-gradient-to-br from-white to-blue-200">{item.n}</p>
@@ -592,7 +649,7 @@ const HomePage = () => {
                                 onClick={() => navigate('/chat')}
                                 className="px-7 py-3 rounded-xl bg-gradient-to-r from-blue-500 to-violet-600 text-white font-semibold shadow-[0_0_30px_rgba(59,130,246,0.35)] hover:-translate-y-0.5 transition-all"
                             >
-                                Try Live Demo →
+                                Try Live Demo â†’
                             </button>
                         </div>
                     </div>
@@ -649,7 +706,7 @@ const HomePage = () => {
                                 transition={{ duration: 0.6, delay: index * 0.2 }}
                                 className="relative z-10 group"
                             >
-                                <div className="glass-card rounded-3xl p-10 h-full hover:-translate-y-2 transition-transform duration-500 bg-[#0A0A0B]">
+                                <div className="glass-card glass-hover-card rounded-3xl p-10 h-full hover:-translate-y-2 transition-transform duration-500 bg-[#0A0A0B]">
                                     <div className="text-7xl font-black text-white/5 mb-6 absolute top-4 right-6 select-none pointer-events-none group-hover:text-white/10 transition-colors">
                                         {item.step}
                                     </div>
@@ -753,10 +810,13 @@ const HomePage = () => {
 
                     <div className="mt-14 grid grid-cols-2 md:grid-cols-4 gap-6">
                         {communityStats.map((item) => (
-                            <div key={item.label} className="text-center">
-                                <p className="text-3xl md:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-br from-white to-blue-200 mb-2">{item.value}</p>
-                                <p className="text-[11px] uppercase tracking-[0.14em] text-slate-600">{item.label}</p>
-                            </div>
+                            <HoverStat
+                                key={item.label}
+                                label={item.label}
+                                baseValue={item.baseValue}
+                                hoverValue={item.hoverValue}
+                                formatValue={item.formatValue}
+                            />
                         ))}
                     </div>
                 </div>
@@ -812,7 +872,7 @@ const HomePage = () => {
                                 >
                                     <span className="relative z-10 flex items-center gap-3">
                                         Get Started Free
-                                        <span className="w-6 h-6 rounded-full bg-white/20 grid place-items-center text-sm group-hover:translate-x-0.5 transition-transform">→</span>
+                                        <span className="w-6 h-6 rounded-full bg-white/20 grid place-items-center text-sm group-hover:translate-x-0.5 transition-transform">â†’</span>
                                     </span>
                                 </button>
 
@@ -820,7 +880,7 @@ const HomePage = () => {
                                     onClick={() => navigate('/features')}
                                     className="px-7 py-4 rounded-xl font-medium text-sm tracking-wide text-slate-300 border border-white/15 bg-transparent hover:bg-white/5 hover:text-white transition-all"
                                 >
-                                    ▶ Watch Demo
+                                    â–¶ Watch Demo
                                 </button>
                             </div>
 

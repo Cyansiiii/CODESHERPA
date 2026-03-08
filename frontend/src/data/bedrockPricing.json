@@ -1,0 +1,35 @@
+{
+  "updatedAt": "2026-03-07",
+  "currency": "USD",
+  "unit": "per 1M tokens",
+  "rows": [
+    {
+      "model": "Claude Sonnet 4.6",
+      "input": "$3.00",
+      "output": "$15.00",
+      "batchInput": "$1.50",
+      "cacheRead": "$0.30"
+    },
+    {
+      "model": "Claude Sonnet 4.6 (Long Context)",
+      "input": "$6.00",
+      "output": "$22.50",
+      "batchInput": "$3.00",
+      "cacheRead": "$0.60"
+    },
+    {
+      "model": "Claude Opus 4.6",
+      "input": "$5.00",
+      "output": "$25.00",
+      "batchInput": "$2.50",
+      "cacheRead": "$0.50"
+    },
+    {
+      "model": "Claude Haiku 4.5",
+      "input": "$1.00",
+      "output": "$5.00",
+      "batchInput": "$0.50",
+      "cacheRead": "$0.10"
+    }
+  ]
+}
