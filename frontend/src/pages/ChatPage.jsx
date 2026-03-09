@@ -400,11 +400,17 @@ const ChatPage = () => {
                 ~18%.
               </p>
               <motion.button
-                whileHover={actionButtonHover}
-                whileTap={{ scale: 0.98 }}
-                className="mt-4 rounded-lg bg-cyan-500 px-3 py-2 text-xs font-semibold text-slate-900 hover:bg-cyan-400"
+                whileHover={{
+                  scale: 1.05,
+                  y: -1,
+                  boxShadow: "0 8px 25px rgba(6,182,212,0.4)",
+                }}
+                whileTap={{ scale: 0.95 }}
+                className="group relative mt-4 rounded-lg bg-cyan-500 px-3 py-2 text-xs font-semibold text-slate-900 hover:bg-cyan-400 overflow-hidden transition-all duration-300"
               >
-                Apply Recommendation
+                <span className="relative z-10">Apply Recommendation</span>
+                <div className="absolute inset-0 bg-gradient-to-r from-cyan-400 to-blue-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <div className="absolute inset-0 rounded-lg bg-white/20 scale-0 group-hover:scale-150 group-hover:opacity-0 transition-all duration-500" />
               </motion.button>
             </motion.div>
           </motion.div>
@@ -491,18 +497,30 @@ const ChatPage = () => {
                 </div>
                 <div className="mt-4 flex gap-2">
                   <motion.button
-                    whileHover={secondaryButtonHover}
+                    whileHover={{ scale: 1.02, y: -1 }}
                     whileTap={{ scale: 0.98 }}
-                    className="rounded-lg border border-white/15 px-3 py-2 text-xs text-slate-200 hover:bg-white/10"
+                    className="group relative rounded-lg border border-white/15 px-3 py-2 text-xs text-slate-200 hover:bg-white/10 hover:border-white/25 transition-all duration-300 overflow-hidden"
                   >
-                    View Logs
+                    <span className="relative z-10">View Logs</span>
+                    <div className="absolute inset-0 bg-gradient-to-r from-white/5 to-cyan-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                   </motion.button>
                   <motion.button
-                    whileHover={actionButtonHover}
-                    whileTap={{ scale: 0.98 }}
-                    className="rounded-lg bg-cyan-500 px-3 py-2 text-xs font-semibold text-slate-900 hover:bg-cyan-400"
+                    whileHover={{
+                      scale: 1.05,
+                      y: -2,
+                      boxShadow: "0 8px 25px rgba(6,182,212,0.4)",
+                    }}
+                    whileTap={{ scale: 0.95 }}
+                    className="group relative rounded-lg bg-cyan-500 px-3 py-2 text-xs font-semibold text-slate-900 hover:bg-cyan-400 overflow-hidden transition-all duration-300"
                   >
-                    Assign Task
+                    <span className="relative z-10 flex items-center gap-1">
+                      Assign Task
+                      <span className="w-0 group-hover:w-3 transition-all duration-300 overflow-hidden">
+                        <span className="inline-block animate-pulse">⚡</span>
+                      </span>
+                    </span>
+                    <div className="absolute inset-0 bg-gradient-to-r from-cyan-400 to-blue-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    <div className="absolute inset-0 rounded-lg bg-white/20 scale-0 group-hover:scale-150 group-hover:opacity-0 transition-all duration-500" />
                   </motion.button>
                 </div>
               </motion.div>
@@ -854,18 +872,42 @@ const ChatPage = () => {
       <div className="flex-1 px-3 py-5 space-y-2">
         {navItems.map((item) => (
           <motion.button
-            whileHover={{ x: 6, scale: 1.01 }}
+            whileHover={{
+              x: 8,
+              scale: 1.02,
+              boxShadow: "0 4px 20px rgba(6,182,212,0.15)",
+            }}
             whileTap={{ scale: 0.98 }}
             key={item.label}
             onClick={() => handleNavClick(item, mobile)}
-            className={`w-full flex items-center gap-3 rounded-xl px-4 py-3 text-sm transition ${
+            className={`group relative w-full flex items-center gap-3 rounded-xl px-4 py-3 text-sm transition-all duration-300 overflow-hidden ${
               selectedSection === item.label
-                ? "bg-cyan-500/15 text-cyan-200 border border-cyan-500/30"
-                : "text-slate-300 hover:bg-white/10"
+                ? "bg-cyan-500/15 text-cyan-200 border border-cyan-500/30 shadow-lg shadow-cyan-500/20"
+                : "text-slate-300 hover:bg-white/10 hover:text-white hover:shadow-md hover:shadow-white/10"
             }`}
           >
-            <item.icon className="h-4 w-4" />
-            {item.label}
+            <item.icon
+              className={`h-4 w-4 transition-all duration-300 ${
+                selectedSection === item.label
+                  ? "text-cyan-300"
+                  : "group-hover:text-cyan-300 group-hover:scale-110"
+              }`}
+            />
+            <span className="relative z-10">{item.label}</span>
+
+            {/* Hover glow effect */}
+            <div
+              className={`absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 ${
+                selectedSection === item.label
+                  ? "bg-gradient-to-r from-cyan-500/10 to-blue-500/10"
+                  : "bg-gradient-to-r from-white/5 to-cyan-500/5"
+              }`}
+            />
+
+            {/* Active indicator */}
+            {selectedSection === item.label && (
+              <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-gradient-to-b from-cyan-400 to-blue-500 rounded-r-full" />
+            )}
           </motion.button>
         ))}
       </div>
@@ -924,20 +966,30 @@ const ChatPage = () => {
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-3 py-4 sm:px-4">
           <div className="flex items-center gap-4">
             <motion.button
-              whileHover={iconButtonHover}
-              whileTap={{ scale: 0.95 }}
+              whileHover={{
+                scale: 1.1,
+                rotate: 90,
+                boxShadow: "0 4px 15px rgba(255,255,255,0.2)",
+              }}
+              whileTap={{ scale: 0.9 }}
               onClick={() => setIsMobileSidebarOpen(true)}
-              className="rounded-lg p-2 text-slate-300 hover:bg-white/10 lg:hidden"
+              className="group relative rounded-lg p-2 text-slate-300 hover:bg-white/10 hover:text-white lg:hidden transition-all duration-300 overflow-hidden"
             >
-              <Menu className="h-5 w-5" />
+              <Menu className="h-5 w-5 transition-transform group-hover:scale-110" />
+              <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-cyan-500/20 to-blue-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             </motion.button>
             <motion.button
-              whileHover={iconButtonHover}
-              whileTap={{ scale: 0.95 }}
+              whileHover={{
+                scale: 1.1,
+                y: -2,
+                boxShadow: "0 4px 15px rgba(255,255,255,0.2)",
+              }}
+              whileTap={{ scale: 0.9 }}
               onClick={() => navigate("/")}
-              className="rounded-lg p-2 transition-colors hover:bg-white/10"
+              className="group relative rounded-lg p-2 transition-all duration-300 hover:bg-white/10 overflow-hidden"
             >
-              <Home className="h-5 w-5" />
+              <Home className="h-5 w-5 transition-transform group-hover:scale-110 group-hover:rotate-12" />
+              <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-white/10 to-cyan-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             </motion.button>
             <div>
               <h1 className="text-xl font-bold text-white">
@@ -970,15 +1022,33 @@ const ChatPage = () => {
               System Active
             </span>
             <motion.button
-              whileHover={iconButtonHover}
-              whileTap={{ scale: 0.95 }}
-              className="rounded-lg p-2 text-slate-300 hover:bg-white/10"
+              whileHover={{
+                scale: 1.1,
+                y: -2,
+                boxShadow: "0 4px 15px rgba(255,255,255,0.2)",
+              }}
+              whileTap={{ scale: 0.9 }}
+              className="group relative rounded-lg p-2 text-slate-300 hover:bg-white/10 hover:text-white transition-all duration-300 overflow-hidden"
             >
-              <Bell className="h-5 w-5" />
+              <Bell className="h-5 w-5 transition-transform group-hover:scale-110 group-hover:rotate-12" />
+              <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-orange-500/20 to-red-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              {/* Notification dot */}
+              <div className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full animate-pulse" />
             </motion.button>
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-cyan-300/90 font-bold text-slate-900">
-              U
-            </div>
+            <motion.div
+              whileHover={{
+                scale: 1.1,
+                rotate: 5,
+                boxShadow: "0 4px 20px rgba(6,182,212,0.3)",
+              }}
+              whileTap={{ scale: 0.95 }}
+              className="group relative flex h-10 w-10 items-center justify-center rounded-xl bg-cyan-300/90 font-bold text-slate-900 transition-all duration-300 hover:bg-cyan-400 cursor-pointer overflow-hidden"
+            >
+              <span className="transition-transform group-hover:scale-110">
+                U
+              </span>
+              <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-cyan-400 to-blue-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            </motion.div>
           </div>
         </div>
       </motion.header>

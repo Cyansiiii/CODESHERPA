@@ -143,11 +143,14 @@ const ChatInterface = () => {
           </div>
         </div>
         <div className="flex gap-2">
-          <button className="text-xs bg-gray-700 hover:bg-gray-600 text-white px-3 py-1 rounded-full transition">
-            Hindi Mode 🇮🇳
+          <button className="group relative text-xs bg-gray-700 hover:bg-gray-600 text-white px-3 py-1 rounded-full transition-all duration-300 hover:scale-105 hover:shadow-md hover:shadow-gray-600/30 overflow-hidden">
+            <span className="relative z-10">Hindi Mode 🇮🇳</span>
+            <div className="absolute inset-0 bg-gradient-to-r from-orange-500/20 to-red-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
           </button>
-          <button className="text-xs bg-blue-600/20 text-blue-400 border border-blue-600/50 hover:bg-blue-600/30 px-3 py-1 rounded-full transition">
-            AWS Bedrock Active
+          <button className="group relative text-xs bg-blue-600/20 text-blue-400 border border-blue-600/50 hover:bg-blue-600/30 px-3 py-1 rounded-full transition-all duration-300 hover:scale-105 hover:shadow-md hover:shadow-blue-500/30 hover:border-blue-400 overflow-hidden">
+            <span className="relative z-10">AWS Bedrock Active</span>
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-cyan-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            <div className="absolute inset-0 rounded-full bg-white/10 scale-0 group-hover:scale-150 group-hover:opacity-0 transition-all duration-500" />
           </button>
         </div>
       </div>
@@ -217,8 +220,15 @@ const ChatInterface = () => {
       {/* Input Area */}
       <div className="shrink-0 p-4 bg-gray-800 border-t border-gray-700">
         <div className="flex gap-2">
-          <button className="p-3 text-gray-400 hover:text-white bg-gray-700/50 rounded-lg transition hover:bg-gray-700">
-            <Mic size={20} />
+          <button className="group relative p-3 text-gray-400 hover:text-white bg-gray-700/50 rounded-lg transition-all duration-300 hover:bg-gray-700 hover:scale-110 hover:shadow-lg hover:shadow-gray-600/30 overflow-hidden">
+            <Mic
+              size={20}
+              className="relative z-10 transition-transform group-hover:scale-110"
+            />
+            {/* Ripple effect */}
+            <div className="absolute inset-0 rounded-lg bg-white/10 scale-0 group-hover:scale-150 group-hover:opacity-0 transition-all duration-500" />
+            {/* Glow effect */}
+            <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-gray-400 to-gray-600 blur-lg opacity-0 group-hover:opacity-20 transition-opacity duration-300 -z-10" />
           </button>
           <input
             type="text"
@@ -226,14 +236,35 @@ const ChatInterface = () => {
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && sendMessage()}
             placeholder="Ask about your code, paste a PR link, or say 'Namaste'..."
-            className="flex-1 bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition placeholder:text-gray-500"
+            className="group flex-1 bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 focus:bg-gray-800 focus:shadow-lg focus:shadow-blue-500/20 transition-all duration-300 placeholder:text-gray-500 hover:border-gray-600"
           />
           <button
             onClick={sendMessage}
             disabled={!input.trim() || !isConnected}
-            className="p-3 bg-blue-600 hover:bg-blue-500 text-white rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
+            className="group relative p-3 bg-blue-600 hover:bg-blue-500 text-white rounded-lg transition-all duration-500 hover:scale-110 hover:shadow-xl hover:shadow-blue-500/50 hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:shadow-none disabled:hover:-translate-y-0 overflow-hidden"
           >
-            <Send size={20} />
+            <Send
+              size={20}
+              className="relative z-10 transition-all duration-300 group-hover:rotate-12 group-hover:scale-110"
+            />
+
+            {/* Animated background gradient */}
+            <div className="absolute inset-0 bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 opacity-0 group-hover:opacity-100 transition-all duration-500 transform group-hover:scale-110" />
+
+            {/* Ripple effect */}
+            <div className="absolute inset-0 rounded-lg bg-white/20 scale-0 group-hover:scale-150 group-hover:opacity-0 transition-all duration-700" />
+
+            {/* Shimmer effect */}
+            <div className="absolute inset-0 -top-1 -bottom-1 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+
+            {/* Glow effect */}
+            <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-blue-400 to-purple-500 blur-xl opacity-0 group-hover:opacity-30 transition-opacity duration-500 -z-10" />
+
+            {/* Particle effect */}
+            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+              <div className="absolute top-1 right-1 w-1 h-1 bg-yellow-400 rounded-full animate-ping animation-delay-200" />
+              <div className="absolute bottom-1 left-1 w-1 h-1 bg-pink-400 rounded-full animate-ping animation-delay-400" />
+            </div>
           </button>
         </div>
         <div className="text-center mt-2">
