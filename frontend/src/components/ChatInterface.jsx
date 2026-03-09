@@ -21,7 +21,8 @@ const ChatInterface = () => {
 
     useEffect(() => {
         // Connect to WebSocket
-        ws.current = new WebSocket('ws://localhost:8000/ws')
+        const wsUrl = import.meta.env.VITE_WS_URL || 'wss://codesherpa-i47c.onrender.com/ws'
+        ws.current = new WebSocket(wsUrl)
 
         ws.current.onopen = () => {
             console.log('Connected to CodeSherpa Backend')

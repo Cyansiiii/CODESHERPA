@@ -34,6 +34,9 @@ import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import ReactMarkdown from 'react-markdown'
 import Logo from '../assets/images/logo.svg'
 
+const API_BASE = import.meta.env.VITE_API_URL || 'https://codesherpa-i47c.onrender.com'
+const WS_BASE = import.meta.env.VITE_WS_URL || 'wss://codesherpa-i47c.onrender.com/ws'
+
 const ChatPage = () => {
     const navigate = useNavigate()
     const [selectedSection, setSelectedSection] = useState('Chat')
@@ -59,7 +62,7 @@ const ChatPage = () => {
     const [apiKeyInput, setApiKeyInput] = useState('')
 
     useEffect(() => {
-        fetch('http://localhost:8000/api/models')
+        fetch(`${API_BASE}/api/models`)
             .then(res => res.json())
             .then(data => setModels(data))
             .catch(err => console.error(err))
@@ -68,7 +71,7 @@ const ChatPage = () => {
     const ws = useRef(null)
     const messagesEndRef = useRef(null)
     const fileInputRef = useRef(null)
-    const websocketUrl = import.meta.env.VITE_WS_URL || 'ws://localhost:8000/ws'
+    const websocketUrl = WS_BASE
     const panelContainerVariants = {
         hidden: { opacity: 0, y: 8 },
         show: {
@@ -442,7 +445,7 @@ const ChatPage = () => {
             const handleModelSwitch = async (e) => {
                 const provider = e.target.value;
                 try {
-                    const res = await fetch('http://localhost:8000/api/models/switch', {
+                    const res = await fetch(`${API_BASE}/api/models/switch`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ provider })
@@ -551,7 +554,7 @@ const ChatPage = () => {
                                 <motion.button
                                     onClick={() => {
                                         if (!apiKeyInput) return;
-                                        fetch('http://localhost:8000/api/models/key', {
+                                        fetch(`${API_BASE}/api/models/key`, {
                                             method: 'POST',
                                             headers: { 'Content-Type': 'application/json' },
                                             body: JSON.stringify({ provider: models.active, key: apiKeyInput })
@@ -572,7 +575,7 @@ const ChatPage = () => {
                         <div className="flex flex-wrap items-center justify-between gap-2">
                             <p className="text-sm text-slate-300">Run quick diagnostics for latency, websocket health, and agent sync.</p>
                             <motion.button onClick={() => {
-                                fetch('http://localhost:8000/api/aws-status')
+                                fetch(`${API_BASE}/api/aws-status`)
                                     .then(res => res.json())
                                     .then(data => alert(JSON.stringify(data, null, 2)))
                                     .catch(err => alert('Backend offline'));
